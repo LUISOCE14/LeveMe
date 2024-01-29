@@ -15,7 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 export default function Login() {
   const navigation = useNavigation();
   return (
-    <View className="flex-1 bg-purple-400">
+    <View className="flex-1 bg-blue-400/100">
       <SafeAreaView className="flex ">
         <View className="flex-row  justify-start">
           <TouchableOpacity
@@ -63,7 +63,7 @@ export default function Login() {
                 Forgot Password?
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity className="bg-orange-500 rounded-3xl py-3 active:bg-blue-700 ">
+            <TouchableOpacity className="bg-orange-500 rounded-3xl py-3 active:bg-blue-700 shadow-md shadow-orange-500/50">
               <Text className="text-center text-gray-800 font-bold font-xl">
                 
                 Log in

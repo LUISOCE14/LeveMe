@@ -41,7 +41,7 @@ export default function SignUp() {
 
 
   return (
-    <View className="flex-1 bg-purple-400">
+    <View className="flex-1 bg-blue-400/100">
       <SafeAreaView className="flex ">
         <View className="flex-row  justify-start">
           <TouchableOpacity
@@ -92,7 +92,7 @@ export default function SignUp() {
               onChangeText={(text) => setPassword(text)}
             />
           <TouchableOpacity
-            className="py-3 bg-yellow-400 rounded-xl"
+            className="py-3 bg-orange-500 rounded-xl"
             onPress={() => navigation.navigate("Home")}
           >
             <Text className="font-xl font-bold text-center text-gray-700">
@@ -105,10 +105,10 @@ export default function SignUp() {
         </Text>
         <View className="flex-row justify-center space-x-12">
           <TouchableOpacity className="p-2 bg-gray-100 rounded-2xl">
-            <AntDesign name="google" size={35} color="purple" />
+            <AntDesign name="google" size={35} color="#60a5fa" />
           </TouchableOpacity>
           <TouchableOpacity className="p-2 bg-gray-100 rounded-2xl">
-            <FontAwesome5 name="facebook" size={35} color="purple" />
+            <FontAwesome5 name="facebook" size={35} color="#60a5fa" />
           </TouchableOpacity>
         </View>
         <View className="flex-row justify-center mt-7">
@@ -116,7 +116,7 @@ export default function SignUp() {
             Already have an account?
           </Text>
           <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-            <Text className="font-semibold text-yellow-500"> Login</Text>
+            <Text className="font-semibold text-orange-500"> Login</Text>
           </TouchableOpacity>
         </View>
       </View>
