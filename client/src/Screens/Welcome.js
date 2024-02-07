@@ -1,12 +1,13 @@
 import { View, Text,TouchableOpacity,Image,SafeAreaView,StatusBar } from 'react-native'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
+import ButtonPer from '../Components/ButtonPersonalizado'
 
 
 export default function Welcome() {
   const navigation = useNavigation();
   return (
-    <SafeAreaView className="flex-1 bg-white" style={{backgroundColor: "#33adff"}}  >
+    <SafeAreaView className="flex-1  bg-purple-400"  >
       <View className="flex-1 flex justify-center my-4 mb-8 " style={{backgroundColor: "#33adff"}}>
         <View className=" flex-row justify-center bottom-1 shadow-lg shadow-orange-500/50">
           <Text className="text-black font-bold text-4xl ">Leve</Text>
@@ -23,25 +24,9 @@ export default function Welcome() {
         </Text>
 
 
-        <View className="space-y-4 top-10">
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Login')}
-            className="py-3 bg-orange-500 mx-7 rounded-xl ">
-            <Text
-              className="text-xl font-bold text-center text-black"
-            >
-              Login
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Signup')} 
-            className="py-3 bg-orange-500 mx-7 rounded-xl ">
-            <Text
-              className="text-xl font-bold text-center text-black"
-            >
-              Sign Up
-            </Text>
-          </TouchableOpacity>
+        <View className="">
+          <ButtonPer ruta={'Login'} text={'Login'}/>
+          <ButtonPer  ruta={'Signup'} text={'Signup'}/>
         </View>
       </View>
       <StatusBar />

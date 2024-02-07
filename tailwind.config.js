@@ -1,6 +1,6 @@
 
 module.exports = {
-  content: ["./App.{js,jsx,ts,tsx}", "./frontend/**/*.{js,jsx,ts,tsx}"],
+  content: ["./App.{js,jsx,ts,tsx}", "./client/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {},
   },

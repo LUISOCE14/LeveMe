@@ -41,7 +41,7 @@ export default function SignUp() {
 
 
   return (
-    <View className="flex-1 bg-blue-400/100">
+    <View className="flex-1 bg-purple-400" >
       <SafeAreaView className="flex ">
         <View className="flex-row  justify-start">
           <TouchableOpacity

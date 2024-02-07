@@ -52,7 +52,7 @@ function TabGroup() {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
           if (route.name === "Home") {
-            iconName = focused ? "home" : "home-outline";
+            iconName = focused ? "checkbox" : "checkbox-outline";
           } else if (route.name === "Perfil") {
             iconName = focused ? "person" : "person-outline";
           } else if (route.name === "Blog") {
@@ -61,12 +61,13 @@ function TabGroup() {
               : "chatbubble-ellipses-outline";
           }
           // You can return any component that you like here!
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return <Ionicons name={iconName} size={40} color={color} />;
         },
-        tabBarActiveTintColor: "#fb923c",
+        tabBarActiveTintColor: "#f97316",
         tabBarInactiveTintColor: "black",
-        tabBarStyle: { backgroundColor: "white" },
+        tabBarStyle: { backgroundColor: "#a78bfa" },
         headerShown: false,
+        tabBarShowLabel: false
       })}
     >
       <Tab.Screen
@@ -78,7 +79,7 @@ function TabGroup() {
       <Tab.Screen
         name="Blog"
         screenOptions={{ headerShown: false }}
-        component={ BlogScreen }
+        component={BlogScreen}
       />
 
       <Tab.Screen
@@ -91,7 +92,7 @@ function TabGroup() {
 }
 
 export default function AppNavigation() {
-  const isAuth = false;
+  const isAuth = true;
   return isAuth ? (
     <NavigationContainer>
       <TabGroup />

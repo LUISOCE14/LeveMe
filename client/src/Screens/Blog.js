@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 export default function Blog() {
   return (
-    <View className="items-center">
+    <View className="items-center bg-zinc-50">
     <Ionicons name="person" size={50} color={"black"} />
     </View>
   )
