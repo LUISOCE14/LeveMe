@@ -7,8 +7,10 @@ import {
   StyleSheet,
 } from "react-native";
 import React, { useState } from "react";
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, AntDesign } from "@expo/vector-icons";
 import Task from "../Components/Task";
+
+
 
 export default function Home() {
   const [activities, setActivities] = useState([
@@ -49,23 +51,24 @@ export default function Home() {
       description: "Mantenerse en contacto con amigos y familiares.",
       completed: true,
     },
-    
   ]);
 
   function toggleTodo(id) {
     setActivities(
-      activities.map((activity) =>
+      activities.map(activity =>
         activity.id === id
-          ? { ...activity, completed: activity.completed === true ? false : true }
+          ? {
+              ...activity,
+              completed: activity.completed === true ? false : true,
+            }
           : activity
       )
     );
   }
 
- 
   return (
-    <View className="flex-1 bg-neutral-100 "  >
-      <SafeAreaView >
+    <View className="flex-1 bg-neutral-100 ">
+      <SafeAreaView>
         {/* En este view se crea el boton de editar*/}
         <View className="flex-row  justify-end mr-5 mt-3">
           <TouchableOpacity
@@ -76,29 +79,37 @@ export default function Home() {
             <MaterialIcons name="edit" size={15} color="black" />
           </TouchableOpacity>
         </View>
-        
-        <Text className="font-bold text-start text-2xl mt-2 ml-4 ">Lista de Actividades</Text>
+
+        <Text className="font-bold text-start text-2xl mt-2 ml-4 ">
+          Lista de Actividades
+        </Text>
         {/* Aqui se cargan todas las actividades */}
-          <View className=" mb-5" style={{height: 370}} >
-            <FlatList
-              data={activities}
-              renderItem={({ item }) => (
-                <Task {...item} toggleTodo={toggleTodo} />
-              )}
-              keyExtractor={item => item.id.toString()}
-              className="p-3"
-            />
-          </View>  
+        <View className=" mb-5" style={{ height: 370 }}>
+          <FlatList
+            data={activities}
+            renderItem={({ item }) => (
+              <Task {...item} toggleTodo={toggleTodo} />
+            )}
+            keyExtractor={item => item.id.toString()}
+            className="p-3"
+          />
+        </View>
         {/*El siguiente View es donde se muestra el progreso */}
-        <View className="bg-black">
-            <Text className="text-3xl text-white text-center">Progreso</Text>
+        <View className="">
+          <Text>{today}</Text>
+          <View className=" justify-center h-60 flex-row items-center">
+            <TouchableOpacity className=" justify-start items-start">
+              <AntDesign name="doubleleft" size={100} color="black" />
+            </TouchableOpacity>
+
+            <TouchableOpacity>
+              <AntDesign name="doubleright" size={100} color="black" />
+            </TouchableOpacity>
           </View>
+        </View>
       </SafeAreaView>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-
-  
-});
+const styles = StyleSheet.create({});

@@ -1,4 +1,4 @@
-import NavigationApp from "./client/src/Navigation/AppNavigaton";
+import NavigationApp from "../client/src/Navigation/AppNavigaton";
 import React from "react";
 import { PaperProvider } from "react-native-paper";
 
