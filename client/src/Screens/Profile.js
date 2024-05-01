@@ -5,21 +5,26 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import React, { useState } from "react";
-import { Avatar } from "react-native-paper";
+import React, { useState, useEffect } from "react";
 import Interes from "../Components/ButtonInteres";
-import ButtonPer from "../Components/ButtonPersonalizado";
 import { useNavigation } from "@react-navigation/native";
 
 export default function Profile() {
-  const [data, setData] =useState( [
-    { id: 1, interes: "Deportes" },
-    { id: 2, interes: "ciclismo" },
-    { id: 3, interes: "Futbol" },
-    { id: 4, interes: "Correr" },
-    { id: 5, interes: "ssdgrtsrfddfgdf" },
-  ]
-  );
+  const [data, setData] =useState( [] );
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://192.168.100.92:3000/api/intereses');
+        const data1 = await response.json();
+        setData(data1);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <View className="flex-1 container bg-purple-400" >
@@ -42,7 +47,7 @@ export default function Profile() {
         <ScrollView>
         <View className=" flex-row flex-wrap  ">
          {data.map((item) => (
-          <Interes id={item.id} interes={item.interes} />
+          <View key={item.id}><Interes id={item.id} interes={item.interes} /></View>
         ))}
         </View>
         </ScrollView>
