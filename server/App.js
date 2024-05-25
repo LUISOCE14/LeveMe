@@ -1,26 +1,42 @@
-import  express  from "express";
-import cors from 'cors'
-import { intereses } from "./data/data.js";
-import { Router } from "express";
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
 
+
+
+//Extraccion de las funciones de express y dotenv
 const app = express();
-const port = process.env.port || 3000
+dotenv.config();
 
-app.use(cors({
-    origin: 'http://localhost:19006' // Reemplaza con la dirección de tu aplicación React Native
-}));
+console.log(process.env.PORT);
 
-app.get('/',(req,res)=>{
-    res.send('Hola Mundo')
-   
+
+//configuracion del puerto en el que se va a correr el servidor
+const port = process.env.PORT || 3000;  ;
+
+//configuracion de express
+app.use(cors());
+// configuracion de errores
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Error interno del servidor');
 });
 
-app.get('/api/intereses',(req,res) =>{
-    res.send(intereses)
+
+
+app.get("/",(req, res) => {
+    res.send("Hola mundo");
+});
+
+
+app.get("/usuarios", async (req, res) => {
+
 })
 
 
-app.listen(port, ()=>{
-   
-    console.log("Server listening on port",port)
-});
+
+
+//configuracion del servidor
+app.listen(port, () => {
+    console.log(`Servidor corriendo en http://localhost:${port}`	);
+})
