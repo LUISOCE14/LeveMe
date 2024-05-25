@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import welcomeRoutes from './routes/welcomeRoutes.js';
+import bodyParser from 'body-parser';
 
 
 
@@ -16,23 +18,23 @@ const port = process.env.PORT || 3000;  ;
 
 //configuracion de express
 app.use(cors());
+app.use(bodyParser.json());
+
+
+//configuracion de rutas
+
+app.use('/api/welcome', welcomeRoutes);
+
+app.get('/', (req, res) => {
+  res.send('Hola mundo');
+});
+
+
 // configuracion de errores
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('Error interno del servidor');
 });
-
-
-
-app.get("/",(req, res) => {
-    res.send("Hola mundo");
-});
-
-
-app.get("/usuarios", async (req, res) => {
-
-})
-
 
 
 
