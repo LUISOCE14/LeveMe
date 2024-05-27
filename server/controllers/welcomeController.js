@@ -1,7 +1,14 @@
 import express from "express";
+import { UserModel } from "../models/User.js";
 
-export const iniciarSesion = (req, res) => {
-    res.send("Iniciando sesion");
+
+export const iniciarSesion =  async(req, res) => {
+    try{
+    const user = await UserModel.findOne({ nombreCompleto: "Luis Ocegueda"});
+    res.status(200).json(user);
+    }catch(error){
+        res.status(500).json({message:error.message});
+    }
 };
 
 
