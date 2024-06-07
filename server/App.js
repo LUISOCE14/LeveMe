@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import welcomeRoutes from './routes/welcomeRoutes.js';
+import welcomeRoutes from './routes/authRoutes.js';
 import bodyParser from 'body-parser';
 import { connectDB } from './config/db.js';
 
@@ -10,12 +10,13 @@ import { connectDB } from './config/db.js';
 const app = express();
 dotenv.config();
 
-console.log(process.env.PORT);
 
 
 //configuracion del puerto en el que se va a correr el servidor
 const port = process.env.PORT || 3000;
 const mongo_uri = process.env.MONGO_URI;
+
+
 
 //configuracion de express
 app.use(cors());
