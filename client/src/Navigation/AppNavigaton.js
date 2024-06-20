@@ -1,14 +1,14 @@
 import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import TabGroupHome from "./TabNavigationApp";
-import StackGroupWelcome from "./StackScreenWelcome";
-
+import { AuthProvider } from "../context/authContext"; // Asegúrate de que la ruta sea correcta
+import AppNavigationDecision from "./appNavigationDesicion";
+import { AlertNotificationRoot } from "react-native-alert-notification";
 
 export default function AppNavigation() {
-  const isAuth = true;
   return (
-    <NavigationContainer>
-      {isAuth ? <TabGroupHome /> : <StackGroupWelcome />}
-    </NavigationContainer>
-  )
-};
+    <AuthProvider>
+      <AlertNotificationRoot >
+        <AppNavigationDecision />
+      </AlertNotificationRoot>
+    </AuthProvider>
+  );
+}

@@ -1,11 +1,11 @@
 import { Router } from "express";
 
-import { iniciarSesion, cerrarSesion, registrarUsuario } from "../controllers/welcomeController.js";
+import { iniciarSesion, cerrarSesion, registrarUsuario } from "../controllers/authController.js";
 
 const router = Router();
 
-router.get("/login", iniciarSesion);
+router.post("/login", iniciarSesion);
 router.get("/logout", cerrarSesion);
-router.get("/register", registrarUsuario);
+router.post("/register", registrarUsuario);
 
 export default router;

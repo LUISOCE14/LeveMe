@@ -17,7 +17,6 @@ const port = process.env.PORT || 3000;
 const mongo_uri = process.env.MONGO_URI;
 
 
-
 //configuracion de express
 app.use(cors());
 app.use(express.json());
@@ -25,10 +24,10 @@ app.use(express.json());
 
 //configuracion de rutas
 
-app.use('/api/welcome', welcomeRoutes);
+app.use('/api/auth', welcomeRoutes);
 
 app.get('/', (req, res) => {
-   res.send('Bienvenido a la API');
+   res.send.json({msg: 'Bienvenido a la API'});
 });
 
 

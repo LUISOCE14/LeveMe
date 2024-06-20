@@ -1,10 +1,14 @@
 import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 
 const UserSchema = new mongoose.Schema({
   nombreCompleto:{
     type: String,
     required: false
+  },
+  edad:{
+    type: Number,
+    required: false,
   },
   email :{
     type: String,
@@ -16,24 +20,23 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  userName: {
+  intereses:[{
+    type: Number,
+    required: true,
+  }],
+  agendas:[ {
     type: String,
     required: true,
-    trim: true
-  },
-  intereses:{
-    type: Array,
-    required: false,
-  },
-  agendas: {
-    type: Array,
-    required: false,
+  }],
+  date: {
+    type: Date,
+    default: Date.now,
   },
 });
 
 
-UserSchema.methods.comparePassword = async (password) => {
+UserSchema.methods.comparePassword = async function (password) {
   return await bcrypt.compare(password, this.password);
-}
+};
 
 export const UserModel = mongoose.model("User", UserSchema);

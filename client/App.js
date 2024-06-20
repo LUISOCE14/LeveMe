@@ -1,5 +1,5 @@
-import NavigationApp from "./src/Navigation/AppNavigaton"
-import React from "react";
+import React from 'react';
+import AppNavigation from './src/Navigation/AppNavigaton.js';
 import { NativeWindStyleSheet } from "nativewind";
 
 
@@ -9,7 +9,7 @@ NativeWindStyleSheet.setOutput({
 
 export default function App() {
   return (
-    <NavigationApp />
+    <AppNavigation />
   );
 }
 
