@@ -17,7 +17,7 @@ export default function Profile() {
   /*useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://192.168.100.16:3000/api/intereses');
+        const response = await fetch('');
         const data1 = await response.json();
         setData(data1);
       } catch (error) {
