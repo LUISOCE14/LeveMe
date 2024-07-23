@@ -31,7 +31,7 @@ export default function Profile() {
       const exists = await FileSystem.getInfoAsync(FileSystem.documentDirectory + FILENAME);
       try {
         const response = await axios.get(
-          `http://192.168.100.16:4000/api/user/obtenerPerfilUsuario/${idUser}`,
+          `http://localhost:4000/api/user/obtenerPerfilUsuario/${idUser}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
