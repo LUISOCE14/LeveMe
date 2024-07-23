@@ -91,7 +91,7 @@ export default function SignUp() {
 
   const handleRegister = async () => { 
     try {
-      const response = await axios.post('', {
+      const response = await axios.post('http://192.168.100.16:4000/api/auth/register', {
         nombreCompleto: nombre,
         edad: edad,
         email: correo,
@@ -139,7 +139,7 @@ export default function SignUp() {
               <Text className=" font-bold text-orange-500 text-6xl ">Me</Text>
               <Image
                 source={require("../../Assets/Icons/megafonoN.png")}
-                style={{ width: 30, height: 30 }}
+                style={{ width: 200, height: 30, backgroundColor: "black" }}
               />
             </View>
           </SafeAreaView>

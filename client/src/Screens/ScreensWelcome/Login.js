@@ -60,7 +60,7 @@ export default function Login() {
       const status = response.status;
       
       if(data.token && status === 200){
-        login(data.token,data.idUser,data.success);
+        login(data.token,data.user.id,data.success);
       }
     } catch (error) {
         const errorMessage = error.response.data.msg || "Ocurrió un error inesperado";

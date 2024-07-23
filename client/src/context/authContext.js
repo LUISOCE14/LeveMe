@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [hasSelectedInterests, setHasSelectedInterests] = useState(false);
   const [token, setToken] = useState("");
-  const [idUser, setUser] = useState("");
+  const [idUser, setIdUser] = useState("");
   const [authOrigin, setAuthOrigin] = useState("");
 
   const login = (receivedToken, receivedIdUser, success) => {
@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setIsAuthenticated(false);
     setToken("");
-    setUser("");
+    setIdUser("");
   };
 
   // Función para verificar la expiración del token

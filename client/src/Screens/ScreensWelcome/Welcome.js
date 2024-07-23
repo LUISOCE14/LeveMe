@@ -13,7 +13,7 @@ export default function Welcome() {
           <Text className="text-black font-bold text-4xl ">Leve</Text>
           <Text className=" font-bold text-orange-500 text-4xl">Me</Text>
           <Image
-            source={require("../../Assets/Icons/megafono.png")}
+            source={require("../../Assets/Icons/megafonoN.png")}
             style={{ width: 22, height: 22}}
           />
           
