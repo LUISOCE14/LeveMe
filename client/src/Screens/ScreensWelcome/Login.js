@@ -49,7 +49,7 @@ export default function Login() {
     // Lógica de inicio de sesión si pasa todas las validaciones
     try {
       // Aquí puedes hacer la llamada a la API o la lógica de autenticación
-      const response = await axios.post("http://192.168.100.16:4000/api/auth/login", {
+      const response = await axios.post("", {
         email: correo,
         password: password,
         headers: {
