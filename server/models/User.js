@@ -16,12 +16,15 @@ const UserSchema = new mongoose.Schema({
     trim: true,
     unique: true
   },
+  avatar:{
+    type: String,
+  },
   password: {
     type: String,
     required: true,
   },
   intereses:[{
-    type: Number,
+    type: String,
     required: true,
   }],
   agendas:[ {

@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import welcomeRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 import bodyParser from 'body-parser';
 import { connectDB } from './config/db.js';
 
@@ -25,9 +26,10 @@ app.use(express.json());
 //configuracion de rutas
 
 app.use('/api/auth', welcomeRoutes);
+app.use('/api/user', userRoutes);
 
 app.get('/', (req, res) => {
-   res.send.json({msg: 'Bienvenido a la API'});
+   res.send("Bienvenido a la API de Autenticación y Usuarios! Consulte la documentación para obtener");
 });
 
 
