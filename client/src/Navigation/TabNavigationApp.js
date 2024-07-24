@@ -1,9 +1,9 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import React from 'react'
-import ProfileScreen from "../Screens/Profile";
 import BlogScreen from "../Screens/Blog";
 import StackHome from './StackNavigationHome'
+import StackProfile from './StackScreensProflie'
 
 const Tab = createBottomTabNavigator();
 
@@ -19,7 +19,7 @@ export default function TabGroupHome() {
             let iconName;
             if (route.name === "Home") {
               iconName = focused ? "checkbox" : "checkbox-outline";
-            } else if (route.name === "Perfil") {
+            } else if (route.name === "Profile") {
               iconName = focused ? "person" : "person-outline";
             } else if (route.name === "Blog") {
               iconName = focused
@@ -49,9 +49,9 @@ export default function TabGroupHome() {
         />
   
         <Tab.Screen
-          name="Perfil"
+          name="Profile"
           options={{ headerShown: false }}
-          component={ProfileScreen}
+          component={StackProfile}
         />
       </Tab.Navigator>
     );

@@ -12,11 +12,10 @@ import React, { useContext, useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useNavigation } from "@react-navigation/native";
 import { ArrowLeftIcon } from "react-native-heroicons/solid";
-import { FontAwesome5, AntDesign } from "@expo/vector-icons";
 import validator from "validator";
 import { AuthContext } from "../../context/authContext";
-import { ALERT_TYPE, Toast } from "react-native-alert-notification";
 import axios from "axios";
+const API_URL = process.env.API_URL;
 
 //screen para hacer el registro de un nuevo cliente
 export default function SignUp() {
@@ -32,57 +31,47 @@ export default function SignUp() {
     // Verificar si el campo de correo electrónico está vacío
     if (nombre.trim().length === 0) {
       Toast.show({
-        textBody: "Por favor ingrese su nombre.",
-        textBodyStyle: {
-          fontSize: 16,
-          textAlign: "center",
-          paddingTop: 4,
-          color: "#FF6961",
-        },
-        autoClose: 2000,
+        type: "error",
+        text1: "Por favor ingresa un nombre.",
+        visibilityTime: 2000, // milisegundos
+        autoHide: true,
       });
       return;
     }
 
     if (edad.trim().length === 0 || edad < 15) {
       Toast.show({
-        textBody: "Debes ser mayor de 15 años.",
-        textBodyStyle: {
-          fontSize: 16,
-          textAlign: "center",
-          paddingTop: 4,
-          color: "#FF6961",
-        },
-        autoClose: 2000,
+        type: "error",
+        text1: "Por favor ingresa una edad mayor a 15 años.",
+        visibilityTime: 2000, // milisegundos
+        autoHide: true,
       });
       return;
     }
     if (!validator.isEmail(correo)) {
       Toast.show({
-        textBody: "El correo electrónico que ingresaste no es válido",
-        textBodyStyle: {
-          fontSize: 16,
-          textAlign: "center",
-          paddingTop: 4,
-          color: "#FF6961",
-        },
-        autoClose: 2000,
+        type: "error",
+        text1: "Por favor ingresa un correo electrónico válido.",
+        visibilityTime: 2000, // milisegundos
+        autoHide: true,
       });
       return;
     }
     // Verificar si el campo de contraseña está vacío
     if (validator.isEmpty(password)) {
       Toast.show({
-        textBody: "Por favor ingresa una contraseña.",
-        textBodyStyle: { fontSize: 16, textAlign: "center", color: "#FF6961" },
-        autoClose: 2000,
+        type: "error",
+        text1: "Por favor ingresa una contraseña.",
+        visibilityTime: 2000, // milisegundos
+        autoHide: true,
       });
       return;
     } else if (password.length < 6) {
       Toast.show({
-        textBody: "La contraseña debe de contener mas de 6 caracteres",
-        textBodyStyle: { fontSize: 16, textAlign: "center", color: "#FF6961" },
-        autoClose: 2000,
+        type: "error",
+        text1: "Por favor ingresa una contraseña de al menos 6 caracteres.",
+        visibilityTime: 2000, // milisegundos
+        autoHide: true,
       });
       return;
     }
@@ -91,7 +80,7 @@ export default function SignUp() {
 
   const handleRegister = async () => { 
     try {
-      const response = await axios.post('http://192.168.100.16:4000/api/auth/register', {
+      const response = await axios.post(`${API_URL}/api/auth/register`, {
         nombreCompleto: nombre,
         edad: edad,
         email: correo,
@@ -108,16 +97,13 @@ export default function SignUp() {
 
     } catch (error) {
       const errorMessage = error.response.data.msg || "Ocurrió un error inesperado";
-        Toast.show({
-          type: ALERT_TYPE.ERROR,
-          textBody: errorMessage,
-          textBodyStyle: {textAlign: "center", fontSize: 16},  
-          autoClose: 3000,
-        });
+      Toast.show({
+        type: "error",
+        text1: errorMessage,
+        visibilityTime: 2000, // milisegundos
+        autoHide: true,
+      });
     }
-
-
-
   };
 
   return (
@@ -139,7 +125,7 @@ export default function SignUp() {
               <Text className=" font-bold text-orange-500 text-6xl ">Me</Text>
               <Image
                 source={require("../../Assets/Icons/megafonoN.png")}
-                style={{ width: 200, height: 30, backgroundColor: "black" }}
+                style={{ width: 30, height: 30}}
               />
             </View>
           </SafeAreaView>

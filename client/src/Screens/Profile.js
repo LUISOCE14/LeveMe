@@ -4,19 +4,21 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
+  Platform
 } from "react-native";
 import React, { useState, useEffect, useContext } from "react";
 import Interes from "../Components/ButtonInteres";
 import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../context/authContext";
 import axios from "axios";
-import { ALERT_TYPE, Toast } from "react-native-alert-notification";
 import { Avatar } from "@rneui/themed";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import Spinner from "react-native-loading-spinner-overlay";
+import Toast from "react-native-toast-message";
 
 const FILENAME = "profilepic.jpg";
+const API_URL = process.env.API_URL;
 
 export default function Profile() {
   const { logout, token, idUser } = useContext(AuthContext);
@@ -31,7 +33,7 @@ export default function Profile() {
       const exists = await FileSystem.getInfoAsync(FileSystem.documentDirectory + FILENAME);
       try {
         const response = await axios.get(
-          `http://localhost:4000/api/user/obtenerPerfilUsuario/${idUser}`,
+          `${API_URL}/api/user/obtenerPerfilUsuario/${idUser}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -53,10 +55,10 @@ export default function Profile() {
         const errorMessage = error.response.data.msg || error.message;
         console.error(error);
         Toast.show({
-          type: ALERT_TYPE.ERROR,
-          textBody: errorMessage,
-          textBodyStyle: { textAlign: "center", fontSize: 16 },
-          autoClose: 3000,
+          type: "error",
+          text1: errorMessage,
+          visibilityTime: 2000, // milisegundos
+          autoHide: true,
         });
       } finally {
         setLoading(false);
@@ -78,10 +80,10 @@ export default function Profile() {
       SaveImageLocal(fotoPerfil);
     } else {
       Toast.show({
-        type: ALERT_TYPE.ERROR,
-        textBody: "No se seleccionó ninguna imagen",
-        textBodyStyle: { textAlign: "center", fontSize: 20 },
-        autoClose: 3000,
+        type: "error",
+        text1: "No se seleccionó ninguna imagen.",
+        visibilityTime: 2000, // milisegundos
+        autoHide: true,
       });
     }
   };
@@ -109,19 +111,19 @@ export default function Profile() {
       });
     } catch (error) {
       Toast.show({
-        type: ALERT_TYPE.ERROR,
-        textBody: "Hubo un problema al actualizar la imagen",
-        textBodyStyle: { textAlign: "center", fontSize: 20 },
-        autoClose: 3000,
+        type: "error",
+        text1: "Hubo un error al actualizar la imagen.",
+        visibilityTime: 2000, // milisegundos
+        autoHide: true,
       });
       return;
     } finally{
       setPhoto(newPath) // Actualiza el estado con la nueva ruta de la imagen
       Toast.show({
-        type: ALERT_TYPE.SUCCESS,
-        textBody: "Imagen actualizada correctamente",
-        textBodyStyle: { textAlign: "center", fontSize: 20 },
-        autoClose: 3000,
+        type: "success",
+        text1: "Imagen actualizada correctamente.",
+        visibilityTime: 2000, // milisegundos
+        autoHide: true,
       });
     }
   };
@@ -171,7 +173,7 @@ export default function Profile() {
                 {/**Este view contiene los botones de cerrar sesion y cambiar interes */}
 
                 <TouchableOpacity className="bg-orange-500 mx-7  p-3 rounded-xl ">
-                  <Text className="font-semibold text-center text-black text-base ">
+                  <Text className="font-semibold text-center text-black text-base " onPress={() => navigation.navigate("SelectInterest")}>
                     Cambiar Intereses
                   </Text>
                 </TouchableOpacity>
@@ -191,7 +193,7 @@ export default function Profile() {
                     Aún no hay intereses 😞
                   </Text>
                 </View>
-                <TouchableOpacity className="bg-orange-500 mx-7  p-4 rounded-xl ">
+                <TouchableOpacity className="bg-orange-500 mx-7  p-4 rounded-xl " onPress={() => navigation.navigate("SelectInterest")}>
                   <Text className="font-semibold text-center text-black text-lg ">
                     Agregar Intereses 😊
                   </Text>
