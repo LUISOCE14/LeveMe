@@ -24,7 +24,8 @@ const UserSchema = new mongoose.Schema({
     required: true,
   },
   intereses:[{
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Interese",
     required: true,
   }],
   agendas:[ {
@@ -42,4 +43,11 @@ UserSchema.methods.comparePassword = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
+// Asumiendo que ya tienes este método para agregar intereses
+UserSchema.statics.agregarIntereses = async function (idUsuario, interesesIds) {
+  return this.updateOne(
+    { _id: idUsuario },
+    { $push: { intereses: { $each: interesesIds } } }
+  );
+};
 export const UserModel = mongoose.model("User", UserSchema);
