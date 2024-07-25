@@ -7,4 +7,4 @@ const InteresSchema = new mongoose.Schema({
     },
 });
 
-export const InteresModel = mongoose.model("Interes", InteresSchema);
+export const InteresModel = mongoose.model("Interese", InteresSchema);
