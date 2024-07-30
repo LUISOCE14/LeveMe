@@ -4,10 +4,9 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
-  Platform
+  Platform,
 } from "react-native";
 import React, { useState, useEffect, useContext } from "react";
-import Interes from "../Components/ButtonInteres";
 import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../context/authContext";
 import axios from "axios";
@@ -16,9 +15,10 @@ import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import Spinner from "react-native-loading-spinner-overlay";
 import Toast from "react-native-toast-message";
+import { Chip } from '@rneui/themed';
 
 const FILENAME = "profilepic.jpg";
-const API_URL = process.env.API_URL;
+const API_Url = process.env.API_URL;
 
 export default function Profile() {
   const { logout, token, idUser } = useContext(AuthContext);
@@ -30,10 +30,12 @@ export default function Profile() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const exists = await FileSystem.getInfoAsync(FileSystem.documentDirectory + FILENAME);
+      const exists = await FileSystem.getInfoAsync(
+        FileSystem.documentDirectory + FILENAME
+      );
       try {
         const response = await axios.get(
-          `${API_URL}/api/user/obtenerPerfilUsuario/${idUser}`,
+          `${API_Url}/api/user/obtenerPerfilUsuario/${idUser}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -47,8 +49,8 @@ export default function Profile() {
           setUser({ ...datosPerfil, intereses: undefined });
           if (exists.exists) {
             setPhoto(exists.uri);
-          }else{
-          setPhoto(datosPerfil.avatar);
+          } else {
+            setPhoto(datosPerfil.avatar);
           }
         }
       } catch (error) {
@@ -95,7 +97,7 @@ export default function Profile() {
     // Verificar si ya existe una imagen
     const exists = await FileSystem.getInfoAsync(existingImagePath);
 
-    if (exists) {
+    if (exists.exists) {
       // Si existe, elimina la imagen antigua
       await FileSystem.deleteAsync(existingImagePath);
       console.log("Imagen antigua eliminada.");
@@ -107,7 +109,7 @@ export default function Profile() {
         from: uri,
         to: newPath,
       }).then(() => {
-        setPhoto(newPath); // Actualiza el estado con la nueva ruta de la imagen 
+        setPhoto(newPath); // Actualiza el estado con la nueva ruta de la imagen
       });
     } catch (error) {
       Toast.show({
@@ -117,8 +119,8 @@ export default function Profile() {
         autoHide: true,
       });
       return;
-    } finally{
-      setPhoto(newPath) // Actualiza el estado con la nueva ruta de la imagen
+    } finally {
+      setPhoto(newPath); // Actualiza el estado con la nueva ruta de la imagen
       Toast.show({
         type: "success",
         text1: "Imagen actualizada correctamente.",
@@ -156,24 +158,32 @@ export default function Profile() {
 
           {/**Esta view contiene los intereses y los botones */}
           <View
-            className="flex-1 bg-neutral-100 px-2 pt-5 mx-auto container "
+            className="flex-1 bg-neutral-200 px-2 pt-5 mx-auto container "
             style={{ borderTopLeftRadius: 60, borderTopRightRadius: 60 }}
           >
             {/**Este es el componente para mostrar los botones con los interes  */}
-            <Text className="text-2xl text-center mb-5">Intereses</Text>
+            <Text className="text-2xl text-center mb-5"> Tus Intereses</Text>
             {intereses.length > 0 ? (
               <>
                 <ScrollView>
                   <View className="flex-row flex-wrap justify-center items-center">
-                    {intereses.map((item, idx) => (
-                      <Interes id={idx} interes={item} />
+                    {intereses.map(item => (
+                      <View key={item._id} className="m-2">
+                      <Chip title={item.nombre} key={item._id} />
+                      </View>
                     ))}
                   </View>
                 </ScrollView>
                 {/**Este view contiene los botones de cerrar sesion y cambiar interes */}
 
                 <TouchableOpacity className="bg-orange-500 mx-7  p-3 rounded-xl ">
-                  <Text className="font-semibold text-center text-black text-base " onPress={() => navigation.navigate("SelectInterest")}>
+                  <Text
+                    className="font-semibold text-center text-black text-base "
+                    onPress={() => navigation.navigate("SelectInterest",{
+                      idUser: idUser,
+                      interesesUser: intereses,
+                    })}
+                  >
                     Cambiar Intereses
                   </Text>
                 </TouchableOpacity>
@@ -193,7 +203,10 @@ export default function Profile() {
                     Aún no hay intereses 😞
                   </Text>
                 </View>
-                <TouchableOpacity className="bg-orange-500 mx-7  p-4 rounded-xl " onPress={() => navigation.navigate("SelectInterest")}>
+                <TouchableOpacity
+                  className="bg-orange-500 mx-7  p-4 rounded-xl "
+                  onPress={() => navigation.navigate("SelectInterest")}
+                >
                   <Text className="font-semibold text-center text-black text-lg ">
                     Agregar Intereses 😊
                   </Text>

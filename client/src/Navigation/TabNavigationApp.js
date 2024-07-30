@@ -3,7 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import React from 'react'
 import BlogScreen from "../Screens/Blog";
 import StackHome from './StackNavigationHome'
-import StackProfile from './StackScreensProflie'
+import StackProfile from "./StackScreenProfile"
 
 const Tab = createBottomTabNavigator();
 

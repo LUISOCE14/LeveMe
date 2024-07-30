@@ -15,7 +15,7 @@ import { ArrowLeftIcon } from "react-native-heroicons/solid";
 import validator from "validator";
 import { AuthContext } from "../../context/authContext";
 import axios from "axios";
-const API_URL = process.env.API_URL;
+const API_Url = process.env.API_URL;
 
 //screen para hacer el registro de un nuevo cliente
 export default function SignUp() {
@@ -80,7 +80,7 @@ export default function SignUp() {
 
   const handleRegister = async () => { 
     try {
-      const response = await axios.post(`${API_URL}/api/auth/register`, {
+      const response = await axios.post(`${API_Url}/api/auth/register`, {
         nombreCompleto: nombre,
         edad: edad,
         email: correo,
