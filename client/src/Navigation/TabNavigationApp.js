@@ -30,8 +30,8 @@ export default function TabGroupHome() {
             return <Ionicons name={iconName} size={40} color={color} />;
           },
           tabBarActiveTintColor: "#f97316",
-          tabBarInactiveTintColor: "black",
-          tabBarStyle: { backgroundColor: "#a78bfa" },
+          tabBarInactiveTintColor: "#4A4A4A",
+          tabBarStyle: { backgroundColor: "#F2F2F2" },
           headerShown: false,
           tabBarShowLabel: false
         })}

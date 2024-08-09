@@ -2,59 +2,28 @@ import {
   View,
   Text,
   SafeAreaView,
-  TouchableOpacity,
   FlatList,
   StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
-import { MaterialIcons, AntDesign } from "@expo/vector-icons";
-import Task from "../../Components/Task"
+import Task from "../../Components/Task";
 import { useNavigation } from "@react-navigation/native";
+import { Button, FAB } from "@rneui/themed";
+import { MaterialIcons} from "@expo/vector-icons";
 
 export default function Home() {
   const [activities, setActivities] = useState([
-    {
-      id: 1,
-      title: "Hacer ejercicio",
-      description: "Ir al gimnasio o hacer ejercicio en casa.",
-      completed: false,
-    },
-    {
-      id: 2,
-      title: "Leer un libro",
-      description: "Dedicar 30 minutos a la lectura diaria.",
-      completed: true,
-    },
-    {
-      id: 3,
-      title: "Aprender React Native",
-      description:
-        "Realizar tutoriales y prácticas para mejorar habilidades en React Native.",
-      completed: false,
-    },
-    {
-      id: 4,
-      title: "Preparar cena saludable",
-      description: "Cocinar una cena equilibrada y nutritiva.",
-      completed: false,
-    },
-    {
-      id: 5,
-      title: "Llamar a un amigo",
-      description: "Mantenerse en contacto con amigos y familiares.",
-      completed: true,
-    },
-    {
-      id: 6,
-      title: "Llamar a un amigo",
-      description: "Mantenerse en contacto con amigos y familiares.",
-      completed: true,
-    },
+    { id: 1, title: "Estudiar", completed: false },
+    { id: 2, title: "Comer", completed: false },
+    { id: 3, title: "Dormir", completed: true },
+    { id: 4, title: "Trabajar", completed: false },
+    { id: 5, title: "Estudiar", completed: false },
   ]);
 
   function toggleTodo(id) {
     setActivities(
-      activities.map(activity =>
+      activities.map((activity) =>
         activity.id === id
           ? {
               ...activity,
@@ -64,53 +33,89 @@ export default function Home() {
       )
     );
   }
-  
+
   const navigation = useNavigation();
 
   const handleEdit = () => {
-    navigation.navigate('CheckListEdit', { activities });
+    navigation.navigate("CheckListEdit", { activities });
   };
 
   return (
-    <View className="flex-1 bg-neutral-100 ">
+    <View className="flex-1" style={styles.color}>
       <SafeAreaView>
         {/* En este view se crea el boton de editar*/}
-        <View className="flex-row  justify-end mr-5 mt-3">
+        <View className="flex-row items-center justify-between mb-2">
+          <Text className="font-bold text-start text-2xl  ml-4 ">
+            Lista de Actividades
+          </Text>
+          {/* Botón de edición con ícono */}
           <TouchableOpacity
             onPress={handleEdit}
-            className="bg-orange-500 px-7 py-2 rounded-xl flex-row "
+            className="bg-orange-500 rounded-full px-3 py-3 mr-3  "
           >
-            <Text className="font-semibold text-center">Editar</Text>
             <MaterialIcons name="edit" size={15} color="black" />
           </TouchableOpacity>
         </View>
-
-        <Text className="font-bold text-start text-2xl mt-2 ml-4 ">
-          Lista de Actividades
-        </Text>
         {/* Aqui se cargan todas las actividades */}
-        <View className=" mb-5" style={{ height: 370 }}>
-          <FlatList
-            data={activities}
-            renderItem={({ item }) => (
-              <Task {...item} toggleTodo={toggleTodo} />
-            )}
-            keyExtractor={item => item.id.toString()}
-            className="p-3"
-          />
+        <View style={{ height: "82%" }}>
+          {activities.length === 0 ? (
+            <View className="flex-1 items-center justify-center">
+              <Text className="text-center text-3xl font-bold">
+                No hay actividades agregadas
+              </Text>
+            </View>
+          ) : (
+            <>
+              <View className="flex-row  justify-center">
+                <Text className="text-sm text-center">
+                  Tienes{" "}
+                  {activities.filter((activity) => !activity.completed).length}{" "}
+                  actividades por completar
+                </Text>
+              </View>
+              <FlatList
+                data={activities}
+                renderItem={({ item }) => (
+                  <Task {...item} toggleTodo={toggleTodo} />
+                )}
+                keyExtractor={(item) => item.id.toString()}
+                className="p-3"
+              />
+            </>
+          )}
         </View>
         {/*El siguiente View es donde se muestra el progreso */}
-        <View className="">
-          <View className=" justify-center h-60 flex-row items-center">
-            <TouchableOpacity
-              className=" justify-start items-start"
-            >
-              <AntDesign name="doubleleft" size={100} color={'black'} />
-            </TouchableOpacity>
+        <View
+          className="h-20 flex-row justify-around items-center pb-3"
+          style={styles.color}
+        >
+          <View style={styles.buttonShadow}>
+            <Button
+              title="Progreso"
+              buttonStyle={{
+                backgroundColor: "#007BFF",
+                width: "100%",
+                borderRadius: 60,
+                paddingVertical: 15,
+                paddingHorizontal: 20,
+              }}
+              titleStyle={{ color: "black", fontWeight: "bold" }}
+              onPress={() => navigation.navigate("Progress")}
+            />
+          </View>
 
-            <TouchableOpacity>
-              <AntDesign name="doubleright" size={100} color="black" />
-            </TouchableOpacity>
+          <View style={styles.buttonShadow}>
+            <FAB
+              size="medium"
+              icon={{
+                name: "add",
+                color: "black",
+              }}
+              buttonStyle={{
+                backgroundColor: "#f97316",
+              }}
+              onPress={() => navigation.navigate("AddActivities")}
+            />
           </View>
         </View>
       </SafeAreaView>
@@ -118,4 +123,18 @@ export default function Home() {
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  color: {
+    backgroundColor: "#E8EAED",
+  },
+  buttonShadow: {
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.45,
+    shadowRadius: 7.4,
+    elevation: 5, // Solo para Android
+  },
+});
