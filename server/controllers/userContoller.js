@@ -29,7 +29,6 @@ export const ObtenerDatosUsuario = async (req, res) => {
     const user = await UserModel.findById(idUser)
       .populate("intereses")
       .exec();
-      console.log(user);
 
     if (!user) {
       return res.status(404).json({ message: "Usuario no encontrado." });
@@ -105,6 +104,7 @@ export const obtenerTodosLosIntereses = async (req, res) => {
     if (!intereses || intereses.length === 0) {
       return res.status(404).json({ message: "No se encontraron intereses." });
     }
+
     res.status(200).json(intereses);
   } catch (error) {
     console.error(error);
@@ -121,6 +121,9 @@ export const actualizarIntereses = async (req, res) => {
       return res.status(400).json({ message: "ID de usuario inválido." });
     }
 
+    if(intereses.length <= 0 ){
+      return res.status(400).json({ message: "Debes especificar al menos un interés."});
+    }
     // Buscar al usuario por ID
     const user = await UserModel.findByIdAndUpdate(
       idUser,
@@ -131,8 +134,6 @@ export const actualizarIntereses = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "Usuario no encontrado." });
     }
-
-    console.log(user);
 
     res.status(200).json({ message: "Intereses actualizados exitosamente." });
   } catch (error) {
@@ -148,7 +149,6 @@ export const agregarIntereses = async (req, res) => {
     const existingIntereses = await UserModel.findById(idUsuario).select(
       "intereses"
     );
-    console.log(existingIntereses);
     if (!existingIntereses) {
       return res.status(404).json({ message: "Usuario no encontrado." });
     }

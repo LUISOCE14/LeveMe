@@ -6,11 +6,13 @@ import Spinner from "react-native-loading-spinner-overlay";
 import axios from "axios";
 import Toast from "react-native-toast-message";
 import { Chip, FAB } from "@rneui/themed";
+import { useNavigation } from "@react-navigation/native";
 
 const API_Url = process.env.API_URL;
 
 function SelectInterest() {
-  const { idUser, interesesUser } = useRoute().params;
+  const { userId, interesesUser } = useRoute().params;
+  const navigation = useNavigation();
   const [selectedInterests, setSelectedInterests] = useState(interesesUser);
   const [interesesTodo, setInteresesTodo] = useState();
   const [isLoading, setIsLoading] = useState(true);
@@ -43,24 +45,62 @@ function SelectInterest() {
     };
 
     fetchData();
-  }, [idUser]);
+  }, [userId]);
 
   const handleChangeInterest = interestId => {
     const existe = selectedInterests.some(i => i._id === interestId);
-    console.log(existe);
     if (existe) {
       const newSelect = selectedInterests.filter(i => i._id !== interestId);
       setSelectedInterests(newSelect);
     } else {
       const item = interesesTodo.find(i => i._id === interestId);
-      console.log(item);
       setSelectedInterests([...selectedInterests, item]);
-      console.log(selectedInterests);
     }
   };
 
   const handleUpdate = async () => {
-    console.log(selectedInterests);
+    if (selectedInterests.length <= 0) {
+      Toast.show({
+        type: "error",
+        text1: "Debes seleccionar al menos un interés.",
+        visibilityTime: 2000, // milisegundos
+        autoHide: true,
+      });
+      return;
+    }
+    setIsLoading(true);
+    const idSelected = selectedInterests.map(item => item._id);
+    try {
+      const response = await axios.post(
+        `${API_Url}/api/user/actualizarIntereses`,
+        {
+          idUser: userId,
+          intereses: idSelected,
+        }
+      );
+      const status = response.status;
+      const mesg = response.data.message;
+      if (status === 200) {
+        setIsLoading(false);
+        Toast.show({
+          type: "success",
+          text1: mesg,
+          visibilityTime: 2000, // milisegundos
+          autoHide: true,
+        });
+      }
+    } catch (error) {
+      const errorMessage = error.response.data.message || error.message;
+      console.error(errorMessage);
+      Toast.show({
+        type: "error",
+        text1: errorMessage,
+        visibilityTime: 2000, // milisegundos
+        autoHide: true,
+      });
+    } finally {
+      navigation.goBack();
+    }
   };
 
   return (

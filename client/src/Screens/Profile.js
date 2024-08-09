@@ -4,10 +4,9 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
-  Platform,
 } from "react-native";
-import React, { useState, useEffect, useContext } from "react";
-import { useNavigation } from "@react-navigation/native";
+import React, { useState, useEffect, useContext, useCallback } from "react";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { AuthContext } from "../context/authContext";
 import axios from "axios";
 import { Avatar } from "@rneui/themed";
@@ -15,7 +14,7 @@ import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import Spinner from "react-native-loading-spinner-overlay";
 import Toast from "react-native-toast-message";
-import { Chip } from '@rneui/themed';
+import { Chip } from "@rneui/themed";
 
 const FILENAME = "profilepic.jpg";
 const API_Url = process.env.API_URL;
@@ -28,47 +27,49 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [photo, setPhoto] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const exists = await FileSystem.getInfoAsync(
-        FileSystem.documentDirectory + FILENAME
-      );
-      try {
-        const response = await axios.get(
-          `${API_Url}/api/user/obtenerPerfilUsuario/${idUser}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        const exists = await FileSystem.getInfoAsync(
+          FileSystem.documentDirectory + FILENAME
         );
-        const datosPerfil = response.data.user;
-        const status = response.status;
-        if (status === 200) {
-          setIntereses(datosPerfil.intereses);
-          setUser({ ...datosPerfil, intereses: undefined });
-          if (exists.exists) {
-            setPhoto(exists.uri);
-          } else {
-            setPhoto(datosPerfil.avatar);
+        try {
+          const response = await axios.get(
+            `${API_Url}/api/user/obtenerPerfilUsuario/${idUser}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          const datosPerfil = response.data.user;
+          const status = response.status;
+          if (status === 200) {
+            setIntereses(datosPerfil.intereses);
+            setUser({ ...datosPerfil, intereses: undefined });
+            if (exists.exists) {
+              setPhoto(exists.uri);
+            } else {
+              setPhoto(datosPerfil.avatar);
+            }
           }
+        } catch (error) {
+          const errorMessage = error.response.data.message || error.message;
+          console.error(error);
+          Toast.show({
+            type: "error",
+            text1: errorMessage,
+            visibilityTime: 2000, // milisegundos
+            autoHide: true,
+          });
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        const errorMessage = error.response.data.msg || error.message;
-        console.error(error);
-        Toast.show({
-          type: "error",
-          text1: errorMessage,
-          visibilityTime: 2000, // milisegundos
-          autoHide: true,
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
+      };
 
-    fetchData();
-  }, []);
+      fetchData();
+    }, [idUser, photo]) // Asegúrate de incluir todas las dependencias aquí
+  );
 
   const selectPhoto = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -169,7 +170,7 @@ export default function Profile() {
                   <View className="flex-row flex-wrap justify-center items-center">
                     {intereses.map(item => (
                       <View key={item._id} className="m-2">
-                      <Chip title={item.nombre} key={item._id} />
+                        <Chip title={item.nombre} key={item._id} />
                       </View>
                     ))}
                   </View>
@@ -179,10 +180,12 @@ export default function Profile() {
                 <TouchableOpacity className="bg-orange-500 mx-7  p-3 rounded-xl ">
                   <Text
                     className="font-semibold text-center text-black text-base "
-                    onPress={() => navigation.navigate("SelectInterest",{
-                      idUser: idUser,
-                      interesesUser: intereses,
-                    })}
+                    onPress={() =>
+                      navigation.navigate("SelectInterest", {
+                        userId: idUser,
+                        interesesUser: intereses,
+                      })
+                    }
                   >
                     Cambiar Intereses
                   </Text>

@@ -11,7 +11,7 @@ export default function StackGroupProfile() {
         }}>
             <Stack.Screen name="ProfileMain" component={Profile} />
             <Stack.Screen name="SelectInterest" component={SelectInterest} options={({route}) => ({
-                params: {interesesUser: route.params.intereses, idUser: route.params.idUser,}
+                params: {interesesUser: route.params.intereses, userId: route.params.idUser,}
             })}/>
         </Stack.Navigator>
     );
