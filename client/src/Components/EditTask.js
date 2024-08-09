@@ -23,11 +23,12 @@ export default function EditTask({
       <TouchableOpacity onPress={() => console.log("Eewrwrewr")}>
         <MaterialIcons
           name="delete"
-          size={35}
+          size={25}
           color="grey"
           onPress={() => toggleDialog()}
         />
-        <Dialog isVisible={visible} onBackdropPress={toggleDialog}>
+      </TouchableOpacity>
+       <Dialog isVisible={visible} onBackdropPress={toggleDialog}>
           <Dialog.Title title="Actividad" />
           <View className="flex-col">
             <Text className="text-center text-lg">
@@ -49,7 +50,6 @@ export default function EditTask({
             </View>
           </View>
         </Dialog>
-      </TouchableOpacity>
     </View>
   );
 }

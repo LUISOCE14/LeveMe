@@ -1,0 +1,2 @@
+export const data =["Jugar a beisbol", "Ver peliculas", "Hacer ejercicio", "Leer un libro", "Jugar a videojuegos", "Estudiar", "Ir al cine",
+ "Tomar una pausa", "Ver documentales", "Leer un articulo", "Comer", "Beber agua","Ver series", "Leer noticias", "Dormir", "Trabajar",];

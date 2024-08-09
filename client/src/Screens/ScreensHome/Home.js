@@ -6,20 +6,18 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState,useContext } from "react";
 import Task from "../../Components/Task";
 import { useNavigation } from "@react-navigation/native";
 import { Button, FAB } from "@rneui/themed";
 import { MaterialIcons} from "@expo/vector-icons";
+import { AuthContext } from '../../context/authContext';
 
 export default function Home() {
   const [activities, setActivities] = useState([
-    { id: 1, title: "Estudiar", completed: false },
-    { id: 2, title: "Comer", completed: false },
-    { id: 3, title: "Dormir", completed: true },
-    { id: 4, title: "Trabajar", completed: false },
-    { id: 5, title: "Estudiar", completed: false },
+   
   ]);
+
 
   function toggleTodo(id) {
     setActivities(
@@ -59,10 +57,16 @@ export default function Home() {
         {/* Aqui se cargan todas las actividades */}
         <View style={{ height: "82%" }}>
           {activities.length === 0 ? (
-            <View className="flex-1 items-center justify-center">
+            <View className="flex-1 flex-col items-center justify-center">
               <Text className="text-center text-3xl font-bold">
                 No hay actividades agregadas
               </Text>
+              <Button
+              title="Quieres probar con nuevos intereses?"
+              type="clear"
+              titleStyle={{ color: "red",fontSize:20 }} 
+              onPress={() => navigation.navigate("SelectInterest") }
+            />
             </View>
           ) : (
             <>

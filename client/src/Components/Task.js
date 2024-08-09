@@ -18,7 +18,7 @@ export default function Task({
         onPress={() => toggleTodo(id)}
         checkedColor="#f97316"
         uncheckedColor="#007BFF"
-        size={30}
+        size={25}
         containerStyle={{
           padding: 1,
         }}
