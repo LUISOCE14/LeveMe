@@ -28,10 +28,6 @@ const UserSchema = new mongoose.Schema({
     ref: "Interese",
     required: true,
   }],
-  agendas:[ {
-    type: String,
-    required: true,
-  }],
   date: {
     type: Date,
     default: Date.now,

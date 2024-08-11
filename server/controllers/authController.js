@@ -10,7 +10,6 @@ dotenv.config({
 export const iniciarSesion = async (req, res) => {
   const { email, password } = req.body;
   // Convertir el correo electrónico a minúsculas para evitar duplicados
-  // email = email.toLowerCase();
   try {
     // Verificar que el usuario exista
 
