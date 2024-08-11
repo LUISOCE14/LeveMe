@@ -3,13 +3,12 @@ import mongoose from "mongoose";
 const agendaSchema = new mongoose.Schema({
   idUsuario:{
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User"
+    ref: "Users"
   },
   actividades: [
     {
       actividad: String,
-      completada: Boolean,
-      required: true,
+      completada: { type: Boolean, default: false }
     }
   ],
   create_at:{

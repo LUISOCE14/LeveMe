@@ -5,7 +5,7 @@ import welcomeRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import bodyParser from 'body-parser';
 import { connectDB } from './config/db.js';
-
+import agendaRoutes from './routes/agendaRoutes.js';
 
 //Extraccion de las funciones de express y dotenv
 const app = express();
@@ -27,7 +27,7 @@ app.use(express.json());
 
 app.use('/api/auth', welcomeRoutes);
 app.use('/api/user', userRoutes);
-
+app.use('/api/agenda', agendaRoutes);
 app.get('/', (req, res) => {
    res.send("Bienvenido a la API de Autenticación y Usuarios! Consulte la documentación para obtener");
 });
