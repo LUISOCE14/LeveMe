@@ -6,22 +6,20 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import React, { useState,useContext } from "react";
+import React, { useState, useContext, useCallback } from "react";
 import Task from "../../Components/Task";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { Button, FAB } from "@rneui/themed";
-import { MaterialIcons} from "@expo/vector-icons";
-import { AuthContext } from '../../context/authContext';
+import { MaterialIcons } from "@expo/vector-icons";
+import { AuthContext } from "../../context/authContext";
 
 export default function Home() {
   const [activities, setActivities] = useState([
-   
   ]);
-
 
   function toggleTodo(id) {
     setActivities(
-      activities.map((activity) =>
+      activities.map(activity =>
         activity.id === id
           ? {
               ...activity,
@@ -59,21 +57,18 @@ export default function Home() {
           {activities.length === 0 ? (
             <View className="flex-1 flex-col items-center justify-center">
               <Text className="text-center text-3xl font-bold">
-                No hay actividades agregadas
+                No hay actividades, agrega algunas nuevas!
               </Text>
-              <Button
-              title="Quieres probar con nuevos intereses?"
-              type="clear"
-              titleStyle={{ color: "red",fontSize:20 }} 
-              onPress={() => navigation.navigate("SelectInterest") }
-            />
+              <Text className="text-sm text-center p-1 ">
+                Puedes usar el botón "Agregar Actividad(+)" para agregar nuevas.                
+              </Text>
             </View>
           ) : (
             <>
               <View className="flex-row  justify-center">
                 <Text className="text-sm text-center">
                   Tienes{" "}
-                  {activities.filter((activity) => !activity.completed).length}{" "}
+                  {activities.filter(activity => !activity.completed).length}{" "}
                   actividades por completar
                 </Text>
               </View>
@@ -82,46 +77,68 @@ export default function Home() {
                 renderItem={({ item }) => (
                   <Task {...item} toggleTodo={toggleTodo} />
                 )}
-                keyExtractor={(item) => item.id.toString()}
+                keyExtractor={item => item.id.toString()}
                 className="p-3"
               />
             </>
           )}
         </View>
         {/*El siguiente View es donde se muestra el progreso */}
-        <View
-          className="h-20 flex-row justify-around items-center pb-3"
-          style={styles.color}
-        >
-          <View style={styles.buttonShadow}>
-            <Button
-              title="Progreso"
-              buttonStyle={{
-                backgroundColor: "#007BFF",
-                width: "100%",
-                borderRadius: 60,
-                paddingVertical: 15,
-                paddingHorizontal: 20,
-              }}
-              titleStyle={{ color: "black", fontWeight: "bold" }}
-              onPress={() => navigation.navigate("Progress")}
-            />
-          </View>
+        {activities.length <= 0 ? (
+          <View
+            className="h-20 flex-row justify-around items-center pb-3"
+            style={styles.color}
+          >
+            <View style={styles.buttonShadow}>
+              <Button
+                title="Progreso"
+                buttonStyle={{
+                  backgroundColor: "#007BFF",
+                  width: "100%",
+                  borderRadius: 60,
+                  paddingVertical: 15,
+                  paddingHorizontal: 20,
+                }}
+                titleStyle={{ color: "black", fontWeight: "bold" }}
+                onPress={() => navigation.navigate("Progress")}
+              />
+            </View>
 
-          <View style={styles.buttonShadow}>
-            <FAB
-              size="medium"
-              icon={{
-                name: "add",
-                color: "black",
-              }}
-              buttonStyle={{
-                backgroundColor: "#f97316",
-              }}
-              onPress={() => navigation.navigate("AddActivities")}
-            />
+            <View style={styles.buttonShadow}>
+              <FAB
+                size="medium"
+                icon={{
+                  name: "add",
+                  color: "black",
+                }}
+                buttonStyle={{
+                  backgroundColor: "#f97316",
+                }}
+                onPress={() => navigation.navigate("AddActivities")}
+              />
+            </View>
           </View>
-        </View>
+        ) : (
+          <View
+            className="h-20  items-center justify-center pb-3"
+            style={styles.color}
+          >
+            <View style={styles.buttonShadow}>
+              <Button
+                title="Progreso"
+                buttonStyle={{
+                  backgroundColor: "#007BFF",
+                  width: "100%",
+                  borderRadius: 60,
+                  paddingVertical: 15,
+                  paddingHorizontal: 20,
+                }}
+                titleStyle={{ color: "black", fontWeight: "bold" }}
+                onPress={() => navigation.navigate("Progress")}
+              />
+            </View>
+          </View>
+        )}
       </SafeAreaView>
     </View>
   );

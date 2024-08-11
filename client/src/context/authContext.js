@@ -11,9 +11,10 @@ export const AuthProvider = ({ children }) => {
   const [authOrigin, setAuthOrigin] = useState("");
 
   const login = (receivedToken, receivedIdUser, success) => {
-    setIsAuthenticated(success);
-    setToken(receivedToken);
-    setIdUser(receivedIdUser);
+    //setIsAuthenticated(success);
+   // setToken(receivedToken);
+    //setIdUser(receivedIdUser);
+    setIsAuthenticated(true)
     setAuthOrigin("login");
   };
 
@@ -35,7 +36,7 @@ export const AuthProvider = ({ children }) => {
     setToken("");
     setIdUser("");
   };
-
+/*
   // Función para verificar la expiración del token
   const checkTokenExpiration = () => {
     if (!token) return; // No hay token para verificar
@@ -55,7 +56,7 @@ export const AuthProvider = ({ children }) => {
 
     return () => clearInterval(timer); // Limpiar el intervalo cuando el componente se desmonte
   }, [token]);
-
+*/
   return (
     <AuthContext.Provider
       value={{

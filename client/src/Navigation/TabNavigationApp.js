@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import React from 'react'
-import BlogScreen from "../Screens/Blog";
+import ScreenFeed from "../Screens/Blog/Feed";
 import StackHome from './StackNavigationHome'
 import StackProfile from "./StackScreenProfile"
 
@@ -45,7 +45,7 @@ export default function TabGroupHome() {
         <Tab.Screen
           name="Blog"
           screenOptions={{ headerShown: false }}
-          component={BlogScreen}
+          component={ScreenFeed}
         />
   
         <Tab.Screen

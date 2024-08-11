@@ -133,7 +133,9 @@ export default function Login() {
               </TouchableOpacity>
               <TouchableOpacity
                 className="bg-orange-500 rounded-3xl py-4 active:bg-blue-700 "
-                onPress={() => handleLogin()}
+                onPress={() => //handleLogin()
+                  login()
+                }
               >
                 <Text className="text-center text-gray-800 font-bold font-xl">
                   Log in
