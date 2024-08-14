@@ -27,7 +27,9 @@ export const obtenerAgendaUser = async (req, res) => {
       idUsuario: idUser,
       isClosed: false,
     });
-    
+    if(!agendasActivas){
+      return res.status(404).json({ msg: "No hay agendas activas para este usuario." });
+    }
     
     res.json(agendasActivas);
   } catch (error) {
@@ -81,10 +83,9 @@ export const actualizarAgenda = async (req, res) => {
     const nuevasActividades = req.body.nuevasActividades; // Nuevas actividades a agregar
 
     // Verificar si el ID del usuario está presente
-    if (!idUser) {
-      return res.status(400).json({ msg: "El ID del usuario es requerido." });
+    if(typeof idUser!== "string" || !validator.isMongoId(idUser)) {
+      return res.status(400).json({ message: "ID de usuario inválido." });
     }
-
     // Buscar la última agenda activa del usuario
     const ultimaAgendaActiva = await AgendaModel.findOne({
       idUsuario: idUser,
@@ -124,7 +125,9 @@ export const marcarComoRealizada = async (req, res) => {
     if (!idAgenda || !nombreActividad) {
       return res.status(400).json({ msg: "Se requiere el ID de la agenda y el nombre de la actividad." });
     }
-
+    if(typeof idAgenda!== "string" || !validator.isMongoId(idAgenda)) {
+      return res.status(400).json({ msg: "ID de agenda inválido." });
+    }
     // Buscar la agenda por su ID
     const agenda = await AgendaModel.findById(idAgenda);
 
