@@ -30,4 +30,4 @@ const PogresoSchema = new mongoose.Schema({
     },
 });
 
-export default ProgresoModel =  mongoose.model("Progreso", PogresoSchema);
+export const ProgresoModel =  mongoose.model("Progreso", PogresoSchema);
