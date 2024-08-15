@@ -18,6 +18,7 @@ export const obtenerAgendaUser = async (req, res) => {
     if (typeof idUsu !== "string" || !validator.isMongoId(idUsu)) {
       return res.status(400).json({ msg: "ID de usuario inválido." });
     }
+<<<<<<< HEAD
     // Buscar la primera agenda activa del usuario que no está cerrada
     const agendaActiva = await AgendaModel.findOne(
       {
@@ -33,6 +34,18 @@ export const obtenerAgendaUser = async (req, res) => {
         .json({ msg: "No hay agendas activas para este usuario." });
     }
     res.send(JSON.stringify(agendaActiva, null, 2));
+=======
+    // Buscar todas las agendas del usuario que no están cerradas
+    const agendasActivas = await AgendaModel.find({
+      idUsuario: idUser,
+      isClosed: false,
+    });
+    if(!agendasActivas){
+      return res.status(404).json({ msg: "No hay agendas activas para este usuario." });
+    }
+    
+    res.json(agendasActivas);
+>>>>>>> 3ed20e71a5d31c89ba0ed65510fdccce23961788
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: "Error al obtener la agenda del usuario." });
@@ -79,10 +92,9 @@ export const actualizarAgenda = async (req, res) => {
     const nuevasActividades = req.body.nuevasActividades; // Nuevas actividades a agregar
 
     // Verificar si el ID del usuario está presente
-    if (!idUser) {
-      return res.status(400).json({ msg: "El ID del usuario es requerido." });
+    if(typeof idUser!== "string" || !validator.isMongoId(idUser)) {
+      return res.status(400).json({ message: "ID de usuario inválido." });
     }
-
     // Buscar la última agenda activa del usuario
     const ultimaAgendaActiva = await AgendaModel.findOne({
       idUsuario: idUser,
@@ -122,7 +134,9 @@ export const marcarComoRealizada = async (req, res) => {
         msg: "Se requiere el ID de la agenda y el nombre de la actividad.",
       });
     }
-
+    if(typeof idAgenda!== "string" || !validator.isMongoId(idAgenda)) {
+      return res.status(400).json({ msg: "ID de agenda inválido." });
+    }
     // Buscar la agenda por su ID
     const agenda = await AgendaModel.findById(idAgenda);
 
