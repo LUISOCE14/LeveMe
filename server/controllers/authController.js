@@ -43,7 +43,7 @@ export const iniciarSesion = async (req, res) => {
         if (err) {
           return res
             .status(500)
-            .json({ message: "Error al generar el token", error: err });
+            .json({ msg: "Error al generar el token", error: err });
         }
 
         // Solo se incluye el ID del usuario en la respuesta
@@ -52,6 +52,7 @@ export const iniciarSesion = async (req, res) => {
           token, // Este es el token JWT que el cliente debe almacenar y utilizar en futuras solicitudes
           user: {
             id: payload.user.id, // Solo se devuelve el ID del usuario
+            nombre: user.nombreCompleto, // Solo se devuelve el nombre del usuario
           },
         });
       }
@@ -76,7 +77,7 @@ export const registrarUsuario = async (req, res) => {
     }
     //encriptando la contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
-    console.log(email)
+    console.log(email);
     //Insertando el usuario en la base de datos
     const newUser = await UserModel.create({
       nombreCompleto,
@@ -103,7 +104,7 @@ export const registrarUsuario = async (req, res) => {
         if (err) {
           return res
             .status(500)
-            .json({ message: "Error al generar el token", error: err });
+            .json({ msg: "Error al generar el token", error: err });
         }
 
         // Solo se incluye el ID del usuario en la respuesta
@@ -120,7 +121,7 @@ export const registrarUsuario = async (req, res) => {
   } catch (err) {
     // Handle specific errors (e.g., validation errors)
     if (err.name === "ValidationError") {
-      return res.status(400).json({ message: err.message });
+      return res.status(400).json({ msg: err.msg });
     }
     console.error(err); // Only log the error for debugging, not the hashed password
     res.status(500).send("Error en el servidor");
@@ -132,7 +133,7 @@ export const cerrarSesion = async (req, res) => {
     try {
       const { token } = req.headers.authorization;
       if (!token) {
-        return res.status(401).json({ message: "No token provided." });
+        return res.status(401).json({ msg: "No token provided." });
       }
 
       // Verifica el token
@@ -142,17 +143,17 @@ export const cerrarSesion = async (req, res) => {
       // Busca el usuario en la base de datos
       const user = await User.findById(userId);
       if (!user) {
-        return res.status(404).json({ message: "User not found." });
+        return res.status(404).json({ msg: "User not found." });
       }
 
       // Aquí puedes decidir si quieres eliminar el token del usuario o simplemente marcarlo como inválido
       // Por ejemplo, eliminando todos los tokens asociados al usuario
       await User.updateOne({ _id: userId }, { $set: { tokens: [] } });
 
-      res.status(200).json({ message: "Session closed successfully." });
+      res.status(200).json({ msg: "Session closed successfully." });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: "Server error." });
+      res.status(500).json({ msg: "Server error." });
     }
   } catch (err) {
     console.error(err); // Only log the error for debugging, not the hashed password

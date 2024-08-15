@@ -11,9 +11,10 @@ const router = Router();
 
 // Ruta de Agenda
 
-router.get("/ObtenerAgendaUsuario/:idUser", obtenerAgendaUser);
+router.get("/ObtenerAgendaUser/:idUser", obtenerAgendaUser);
 router.put("/ActualizarAgenda/:idAgenda", actualizarAgenda);
 router.post("/CrearAgenda", crearAgenda);
-router.post("/MarcarComoRealizada/:idAgenda", marcarComoRealizada);
+router.post("/MarcarComoRealizada", marcarComoRealizada);
 router.delete("/EliminarActividad/:idAgenda/:idActividad", eliminarActividad);
+
 export default router;

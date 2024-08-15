@@ -163,7 +163,6 @@ export default function AddActivities() {
                 (i) => i.actividad === item
               );
               if (existe) {
-                console.log("La actividad ya existe");
                 return (
                   <AddTask
                     actividad={item}
@@ -172,7 +171,6 @@ export default function AddActivities() {
                   />
                 );
               } else {
-                console.log("La actividad no existe");
                 return (
                   <AddTask
                     actividad={item}

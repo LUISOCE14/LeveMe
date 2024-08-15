@@ -63,7 +63,7 @@ export default function Login() {
       const status = response.status;
 
       if (data.token && status === 200) {
-        login(data.token, data.user.id, data.success);
+        login(data.token, data.user, data.success);
       }
     } catch (error) {
       const errorMessage =
@@ -133,9 +133,7 @@ export default function Login() {
               </TouchableOpacity>
               <TouchableOpacity
                 className="bg-orange-500 rounded-3xl py-4 active:bg-blue-700 "
-                onPress={() => //handleLogin()
-                  login()
-                }
+                onPress={() => handleLogin()}
               >
                 <Text className="text-center text-gray-800 font-bold font-xl">
                   Log in

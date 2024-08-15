@@ -5,6 +5,7 @@ import {
   FlatList,
   StyleSheet,
 } from "react-native";
+import axios from "axios";
 import React, { useState } from "react";
 import EditTask from "../../Components/EditTask";
 import { ArrowLeftIcon } from "react-native-heroicons/solid";
@@ -12,16 +13,31 @@ import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@rneui/themed";
 import Toast from "react-native-toast-message";
+import AddTask from "../../Components/AddTasks";
+
+const API_Url = process.env.API_URL;
 
 const CheckListEdit = ({ route }) => {
   const navigation = useNavigation();
+  const { idAgenda } = route.params;
   const [activities, setActivities] = useState(route.params.activities);
+  const completadas = activities.filter((activity) => activity.completed).length === activities.length ? true : false;
+  console.log(idAgenda);
 
-  function toggledelete(id) {
+  const toggledelete = async id => {
     try {
-      setActivities(
-       activities.filter((activity) => activity.id!== id)
-      );
+      const response = await axios.delete(`${API_Url}/api/agendas/EliminarActividad/${idAgenda}/${id}`);
+      const msg = response.data.msg;
+      const status = response.status;
+      if (status === 200) {
+        setActivities(activities.filter(activity => activity._id!== id));
+        Toast.show({
+          type: "success",
+          text1: msg,
+          visibilityTime: 2000, // milisegundos
+          autoHide: true,
+        });
+      }
     } catch (error) {
       console.error("Error al eliminar la actividad", error);
       const errorMessage =
@@ -56,8 +72,8 @@ const CheckListEdit = ({ route }) => {
         </View>
 
         {/* Aqui se cargan todas las actividades */}
-        <View style={{ height: "82%" }}>
-          {activities.length === 0 ? (
+        <View style={{ height: "41%" }}>
+          {activities.length === 0  || completadas ? (
             <Text style={{ textAlign: "center", marginTop: 100 }}>
               No hay actividades agregadas
             </Text>
@@ -65,12 +81,23 @@ const CheckListEdit = ({ route }) => {
             <>
               <FlatList
                 data={activities}
-                renderItem={({ item }) => <EditTask {...item} toggleDelete={toggledelete} />}
-                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => {
+                  if (item.completada == false) {
+                    return (<EditTask {...item} toggleDelete={toggledelete} />)
+                  } else {
+                    return null;
+                  }
+                }}
+                keyExtractor={item => item._id.toString()}
                 className="p-3"
               />
             </>
           )}
+        </View>
+        <View style={{height: "41%"}}>
+              <Text className="text-center text-2xl">
+                  Actividades Recomendadas
+              </Text>
         </View>
         <View
           className="h-20 flex-row items-center justify-center"
@@ -78,7 +105,7 @@ const CheckListEdit = ({ route }) => {
         >
           <View style={styles.buttonShadow}>
             <Button
-              title="Añadir Actividades"
+              title="Guardar"
               buttonStyle={{
                 backgroundColor: "#FFF",
                 width: "100%",
@@ -87,7 +114,7 @@ const CheckListEdit = ({ route }) => {
                 paddingHorizontal: 15,
               }}
               titleStyle={{ color: "black", fontWeight: "bold" }}
-              onPress={() => navigation.navigate("AddActivities") }
+              onPress={() => navigation.navigate("AddActivities")}
             />
           </View>
         </View>

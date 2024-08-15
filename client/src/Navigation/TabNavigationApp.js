@@ -4,6 +4,7 @@ import React from 'react'
 import ScreenFeed from "../Screens/Blog/Feed";
 import StackHome from './StackNavigationHome'
 import StackProfile from "./StackScreenProfile"
+import ScreenResources from "../Screens/ScreensResources/Resources"
 
 const Tab = createBottomTabNavigator();
 
@@ -26,6 +27,9 @@ export default function TabGroupHome() {
                 ? "chatbubble-ellipses-sharp"
                 : "chatbubble-ellipses-outline";
             }
+            else if (route.name === "Resources") {
+              iconName = focused? "book" : "book-outline";
+            }
             // Aqui retorna los iconos que se muestran en los elementos de TabBar
             return <Ionicons name={iconName} size={40} color={color} />;
           },
@@ -47,7 +51,11 @@ export default function TabGroupHome() {
           screenOptions={{ headerShown: false }}
           component={ScreenFeed}
         />
-  
+        <Tab.Screen
+        name="Resources"
+        screenOptions={{ headerShown: false }}
+        component={ScreenResources}
+        />
         <Tab.Screen
           name="Profile"
           options={{ headerShown: false }}
