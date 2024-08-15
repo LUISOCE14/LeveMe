@@ -39,7 +39,10 @@ export default function EditTask({
               title="Eliminar"
               type="clear"
               titleStyle={{ color: "red",fontSize:20 }} 
-              onPress={() => toggleDelete(_id) }
+              onPress={() => {
+                toggleDelete(_id,actividad) 
+                toggleDialog();
+              }}
             />
              <Button
               title="Cancelar"

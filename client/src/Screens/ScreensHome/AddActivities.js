@@ -12,14 +12,17 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ArrowLeftIcon } from "react-native-heroicons/solid";
 import { useNavigation } from "@react-navigation/native";
 import AddTask from "../../Components/AddTasks";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
 import { Button, FAB, Dialog } from "@rneui/themed";
-import { Entypo } from "@expo/vector-icons";
 import { data } from "./data";
+import axios from "axios";
 
-export default function AddActivities() {
+const API_Url = process.env.API_URL;
+
+export default function AddActivities({ route }) {
   const navigation = useNavigation();
+  const { idUser, token } = route.params;
+  const [ActividadesRecomendadas, setActividadesRecomendadas] = useState(data);
   const [actividadesAgenda, setActividadesAgenda] = useState([]);
   const [visible, setVisible] = useState(false);
   const [task, setTask] = useState("");
@@ -59,7 +62,7 @@ export default function AddActivities() {
   const handleAddTask = (activity, origen) => {
     if (origen === "pred") {
       if (actividadesAgenda === undefined || actividadesAgenda.length === 0) {
-        setActividadesAgenda([{ actividad: activity, completed: false }]);
+        setActividadesAgenda([{ actividad: activity }]);
       } else {
         let existe = actividadesAgenda.some(
           (item) => item.actividad === activity
@@ -70,10 +73,7 @@ export default function AddActivities() {
           );
           setActividadesAgenda(newActividadesAgenda);
         } else {
-          setActividadesAgenda([
-            ...actividadesAgenda,
-            { actividad: activity, completed: false },
-          ]);
+          setActividadesAgenda([...actividadesAgenda, { actividad: activity }]);
         }
       }
     } else if (origen === "personal") {
@@ -95,21 +95,18 @@ export default function AddActivities() {
         return;
       }
       if (actividadesAgenda === undefined || actividadesAgenda.length === 0) {
-        setActividadesAgenda([{ actividad: activity, completed: false }]);
+        setActividadesAgenda([{ actividad: activity }]);
       } else {
-        setActividadesAgenda([
-          ...actividadesAgenda,
-          { actividad: activity, completed: false },
-        ]);
-        data.push(activity);
+        setActividadesAgenda([...actividadesAgenda, { actividad: activity }]);
+        setActividadesRecomendadas([...ActividadesRecomendadas,{ actividad: activity }]);
         setTask("");
         toggleDialog();
       }
     }
   };
 
-  const handleSaveActivities = () => {
-    if (actividadesAgenda.length === 0) {
+  const handleSaveActivities = async () => {
+    if (actividadesAgenda.length <= 0) {
       Toast.show({
         text1: "No has agregado ninguna actividad.",
         type: "error",
@@ -117,10 +114,30 @@ export default function AddActivities() {
       });
       return;
     }
-
+    console.log(actividadesAgenda);
     try {
-      console.log("Guardando actividades...");
+      const response = await axios.post(`${API_Url}/api/agendas/CrearAgenda`, {
+        idUser,
+        actividades: actividadesAgenda,
+      },{
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const msg = response.data.msg;
+      const status = response.status;
+      if (status === 200) {
+        Toast.show({
+          type: "success",
+          text1: msg,
+          visibilityTime: 2000, // milisegundos
+          autoHide: true,
+        });
+      }
     } catch (error) {
+      console.error(error);
       const errorMessage =
         error.response.data.msg || "Ocurrió un error inesperado";
       Toast.show({
@@ -130,14 +147,8 @@ export default function AddActivities() {
         autoHide: true,
       });
     } finally {
-      Toast.show({
-        type: "success",
-        text1: "Actividades guardadas exitosamente.",
-        visibilityTime: 2000, // milisegundos
-        autoHide: true,
-      });
+      navigation.goBack();
     }
-    navigation.navigate("Home");
   };
 
   return (
@@ -156,16 +167,16 @@ export default function AddActivities() {
             Recomendacion de actividades segun tus intereses
           </Text>
           <FlatList
-            data={data}
+            data={ActividadesRecomendadas}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => {
               const existe = actividadesAgenda.some(
-                (i) => i.actividad === item
+                (i) => i.actividad === item.actividad
               );
               if (existe) {
                 return (
                   <AddTask
-                    actividad={item}
+                    actividad={item.actividad}
                     handleAddTask={handleAddTask}
                     isAddTask={true}
                   />
@@ -173,7 +184,7 @@ export default function AddActivities() {
               } else {
                 return (
                   <AddTask
-                    actividad={item}
+                    actividad={item.actividad}
                     handleAddTask={handleAddTask}
                     isAddTask={false}
                   />

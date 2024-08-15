@@ -28,10 +28,9 @@ export const obtenerAgendaUser = async (req, res) => {
     );
 
     if (!agendaActiva) {
-      return res
-        .status(404)
-        .json({ msg: "No hay agendas activas para este usuario." });
+      return res.json({ msg: "No hay agendas activas para este usuario.", agendaActiva });
     };
+  
     res.send(JSON.stringify(agendaActiva, null, 2));
   } catch (error) {
     console.error(error);
@@ -43,16 +42,18 @@ export const crearAgenda = async (req, res) => {
   try {
     const actividades = req.body.actividades;
     const idUser = req.body.idUser;
+  
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
 
     if (!token) {
       return res.status(401).json({ msg: "Token de acceso no proporcionado." });
     }
-
     if (typeof idUser !== "string" || !validator.isMongoId(idUser)) {
       return res.status(400).json({ msg: "ID de usuario inválido." });
     }
+
+    
     const userExists = await UserModel.findById(idUser); // Asegúrate de que User es tu modelo de usuario
     if (!userExists)
       return res.status(404).send({ msg: "Usuario no encontrado" });
@@ -66,7 +67,7 @@ export const crearAgenda = async (req, res) => {
     // Guardar la nueva agenda en la base de datos
     await newAgenda.save();
 
-    res.status(201).json(newAgenda);
+    res.status(200).json({msg: "Agenda creada exitosamente." });
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: "Error inesperado." });
@@ -77,6 +78,9 @@ export const actualizarAgenda = async (req, res) => {
   try {
     const idUser = req.body.idUser; // ID del usuario enviado en el cuerpo de la solicitud
     const nuevasActividades = req.body.nuevasActividades; // Nuevas actividades a agregar
+    const idAgenda = req.params.idAgenda; // ID de la agenda envi
+    console.log(idUser)
+    console.log(idAgenda)
 
     // Verificar si el ID del usuario está presente
     if (typeof idUser !== "string" || !validator.isMongoId(idUser)) {
@@ -94,9 +98,6 @@ export const actualizarAgenda = async (req, res) => {
       });
     }
 
-    // Eliminar todas las actividades de la agenda
-    //ultimaAgendaActiva.actividades = [];
-
     // Agregar las nuevas actividades
     ultimaAgendaActiva.actividades.push(...nuevasActividades);
 
@@ -104,7 +105,7 @@ export const actualizarAgenda = async (req, res) => {
     await ultimaAgendaActiva.save();
 
     // Enviar la agenda actualizada como respuesta
-    res.status(200).json(ultimaAgendaActiva);
+    res.status(200).json({msg: "Agenda actualizada correctamente." });
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: "Error al actualizar la agenda." });
@@ -163,7 +164,6 @@ export const marcarComoRealizada = async (req, res) => {
 export const eliminarActividad = async (req, res) => {
   try {
     const { idAgenda, idActividad } = req.params;
-    console.log(idAgenda, idActividad);
 
     if (typeof idAgenda !== "string" || !validator.isMongoId(idAgenda)) {
       return res.status(400).json({ msg: "ID de agenda inválido." });
@@ -194,6 +194,8 @@ export const eliminarActividad = async (req, res) => {
       });
     }
     agenda.actividades.splice(index, 1);
+
+
 
     // Guardar la agenda actualizada en la base de datos
     await agenda.save();

@@ -49,6 +49,11 @@ export default function Home() {
           },
         }
       );
+      if (response.status === 200 && response.data.agendaActiva === null) {
+        setIsLoading(false);
+        return;
+      }
+
       const data = response.data;
       const estatus = response.status;
       if (estatus === 200) {
@@ -60,7 +65,7 @@ export default function Home() {
       console.error(error);
       Toast.show({
         type: "error",
-        text1: errorMessage,
+        text2: errorMessage,
         visibilityTime: 2000, // milisegundos
         autoHide: true,
       });
@@ -69,8 +74,8 @@ export default function Home() {
     }
   };
 
-  const toggleTodo = async id => {
-    const yaMarcado = activities.find(activity => {
+  const toggleTodo = async (id) => {
+    const yaMarcado = activities.find((activity) => {
       if (activity._id === id) {
         if (activity.completada === true) {
           return true;
@@ -102,7 +107,7 @@ export default function Home() {
       if (estatus === 200) {
         // Actualizar la lista de actividades
         setActivities(
-          activities.map(activity =>
+          activities.map((activity) =>
             activity._id === id
               ? { ...activity, completada: !activity.completada }
               : activity
@@ -140,10 +145,10 @@ export default function Home() {
   const navigation = useNavigation();
 
   const handleEdit = () => {
-    navigation.navigate("CheckListEdit", { activities, idAgenda });
+    navigation.navigate("CheckListEdit", { activities, idAgenda, idUser });
   };
 
-  const toggleDialog = origen => {
+  const toggleDialog = (origen) => {
     if (origen === "completada") {
       setDialogCompletada(!dialogCompletada);
     } else if (origen === "fraseDiaria") {
@@ -165,16 +170,18 @@ export default function Home() {
               Lista de Actividades
             </Text>
             {/* Botón de edición con ícono */}
-            <TouchableOpacity
-              onPress={handleEdit}
-              className="bg-orange-500 rounded-full px-3 py-3 mr-3  "
-            >
-              <MaterialIcons name="edit" size={15} color="black" />
-            </TouchableOpacity>
+            {activities.length > 0 && (
+              <TouchableOpacity
+                onPress={handleEdit}
+                className="bg-orange-500 rounded-full px-3 py-3 mr-3  "
+              >
+                <MaterialIcons name="edit" size={15} color="black" />
+              </TouchableOpacity>
+            )}
           </View>
           {/* Aqui se cargan todas las actividades */}
           <View style={{ height: "82%" }}>
-            {activities.length === 0 ? (
+            {activities.length <= 0 ? (
               <View className="flex-1 flex-col items-center justify-center">
                 <Text className="text-center text-3xl font-bold">
                   No hay actividades, agrega algunas nuevas!
@@ -189,7 +196,10 @@ export default function Home() {
                 <View className="flex-row  justify-center">
                   <Text className="text-sm text-center">
                     Tienes{" "}
-                    {activities.filter(activity => !activity.completed).length}{" "}
+                    {
+                      activities.filter((activity) => !activity.completed)
+                        .length
+                    }{" "}
                     actividades por completar
                   </Text>
                 </View>
@@ -198,7 +208,7 @@ export default function Home() {
                   renderItem={({ item }) => (
                     <Task {...item} toggleTodo={toggleTodo} />
                   )}
-                  keyExtractor={item => item._id.toString()}
+                  keyExtractor={(item) => item._id.toString()}
                   className="p-3"
                 />
               </>
@@ -235,7 +245,9 @@ export default function Home() {
                   buttonStyle={{
                     backgroundColor: "#f97316",
                   }}
-                  onPress={() => navigation.navigate("AddActivities")}
+                  onPress={() =>
+                    navigation.navigate("AddActivities", { idUser, token })
+                  }
                 />
               </View>
             </View>
@@ -262,7 +274,7 @@ export default function Home() {
           )}
         </SafeAreaView>
       )}
-      
+
       {dialogCompletada && (
         <DialogFraseCompletada
           visible={dialogCompletada}

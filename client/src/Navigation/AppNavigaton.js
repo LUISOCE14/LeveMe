@@ -13,6 +13,7 @@ export default function AppNavigation() {
         topOffset={50} // distancia desde la parte superior
         bottomOffset={40} // distancia desde la parte inferior
         text1Style={{ fontSize: 17, fontWeight: "400" }}
+        text2Style={{ fontSize: 13, fontWeight: "bold" }}
       />
     </AuthProvider>
   );

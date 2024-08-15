@@ -1,2 +1,18 @@
-export const data =["Jugar a beisbol", "Ver peliculas", "Hacer ejercicio", "Leer un libro", "Jugar a videojuegos", "Estudiar", "Ir al cine",
- "Tomar una pausa", "Ver documentales", "Leer un articulo", "Comer", "Beber agua","Ver series", "Leer noticias", "Dormir", "Trabajar",];
+export const data = [
+  { actividad: "Jugar a beisbol" },
+  { actividad: "Ver peliculas" },
+  { actividad: "Hacer ejercicio" },
+  { actividad: "Leer un libro" },
+  { actividad: "Jugar a videojuegos" },
+  { actividad: "Estudiar" },
+  { actividad: "Ir al cine" },
+  { actividad: "Tomar una pausa" },
+  { actividad: "Ver documentales" },
+  { actividad: "Leer un articulo" },
+  { actividad: "Comer" },
+  { actividad: "Beber agua" },
+  { actividad: "Ver series" },
+  { actividad: "Leer noticias" },
+  { actividad: "Dormir" },
+  { actividad: "Trabajar" },
+];

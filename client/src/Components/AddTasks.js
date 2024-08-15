@@ -19,7 +19,7 @@ export default function AddTask({
         checked={isAddTask}
         checkedColor="#f97316"
         uncheckedColor="#007BFF"
-        size={20}
+        size={18}
         containerStyle={{
           padding: 1,
           backgroundColor: "transparent",
