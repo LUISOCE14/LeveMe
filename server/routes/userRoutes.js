@@ -7,6 +7,7 @@ import {
   obtenerTodosLosIntereses,
   agregarIntereses,
   eliminarIntereses,
+  ObtenerProgresoUsuario
 } from "../controllers/userContoller.js";
 
 const router = Router();
@@ -18,5 +19,6 @@ router.post("/actualizarIntereses", actualizarIntereses);
 router.get("/obtenerTodosLosIntereses", obtenerTodosLosIntereses);
 router.post("/agregarIntereses", agregarIntereses);
 router.put("/eliminarIntereses", eliminarIntereses);
+router.get("/ObtenerProgresoUsuario/:idUser", ObtenerProgresoUsuario);
 
 export default router;
