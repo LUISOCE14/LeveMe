@@ -32,7 +32,7 @@ app.use('/api/auth', welcomeRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/agendas', agendaRoutes);
 app.use('/api/recursos', recursosRoutes);
-app.use('/api/post', postRoutes);
+app.use('/api/posts', postRoutes);
 
 closeAgendasDaily(); // Cada día a las 20:58
 
