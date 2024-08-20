@@ -29,6 +29,7 @@ export default function Home() {
   const [dialogCompletada, setDialogCompletada] = useState(false);
   const [dialogFraseDiaria, setDialogFraseDiaria] = useState(null);
 
+
   useFocusEffect(
     useCallback(() => {
       if (idUser) {
@@ -231,7 +232,7 @@ export default function Home() {
                     paddingHorizontal: 20,
                   }}
                   titleStyle={{ color: "black", fontWeight: "bold" }}
-                  onPress={() => navigation.navigate("Progress")}
+                  onPress={() => navigation.navigate("Progress",{idUser})}
                 />
               </View>
 
@@ -267,7 +268,7 @@ export default function Home() {
                     paddingHorizontal: 20,
                   }}
                   titleStyle={{ color: "black", fontWeight: "bold" }}
-                  onPress={() => navigation.navigate("Progress")}
+                  onPress={() => navigation.navigate("Progress",{idUser})}
                 />
               </View>
             </View>

@@ -4,6 +4,7 @@ import validator from "validator";
 import mongoose from "mongoose";
 import { InteresModel } from "../models/Intereses.js";
 import { ProgresoModel } from "../models/progreso.js";
+import { mensajeCompletados } from "../services/mensajesProgreso.js";
 
 dotenv.config({
   path: "../.env",
@@ -17,9 +18,7 @@ export const ObtenerDatosUsuario = async (req, res) => {
     const token = authHeader && authHeader.split(" ")[1]; // Extrae el token del encabezado Authorization
 
     if (!token) {
-      return res
-        .status(401)
-        .json({ msg: "Token de acceso no proporcionado." });
+      return res.status(401).json({ msg: "Token de acceso no proporcionado." });
     }
 
     // Verifica si idUser es una cadena vacía además de verificar que no sea nulo o 'undefined'
@@ -108,12 +107,9 @@ export const obtenerTodosLosIntereses = async (req, res) => {
     res.status(200).json(intereses);
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({
-        msg:
-          "Error interno del servidor al intentar obtener todos los intereses.",
-      });
+    res.status(500).json({
+      msg: "Error interno del servidor al intentar obtener todos los intereses.",
+    });
   }
 };
 
@@ -211,9 +207,7 @@ export const eliminarIntereses = async (req, res) => {
     );
 
     if (!user) {
-      return res
-        .status(404)
-        .json({ msg: "Usuario o interés no encontrado." });
+      return res.status(404).json({ msg: "Usuario o interés no encontrado." });
     }
 
     res.status(200).json({ msg: "Interés eliminado exitosamente." });
@@ -224,50 +218,58 @@ export const eliminarIntereses = async (req, res) => {
 };
 
 export const ObtenerProgresoUsuario = async (req, res) => {
-  const { idUser } = req.params;
-  const fecha = req.body.fecha; // Debe estar en formato 'YYYY-MM-DD'
+  const { idUser, fecha } = req.body;
+
+
 
   try {
     if (typeof idUser !== "string" || !validator.isMongoId(idUser)) {
       return res.status(400).json({ msg: "ID de usuario inválido." });
     }
-    if(!fecha || typeof fecha !== 'string' || !validator.isDate(fecha)) {
-      return res.status(400).json({ msg: "Debes proporcionar una fecha válida." });
+    if (!fecha || typeof fecha !== "string" || !validator.isDate(fecha)) {
+      return res
+        .status(400)
+        .json({ msg: "Debes proporcionar una fecha válida." });
     }
 
     const progreso = await ProgresoModel.findOne({
       idUsuario: idUser,
-      date: fecha
+      date: fecha,
     }).exec();
 
     if (!progreso) {
-      return res
-        .status(404)
-        .json({ msg: "No se ha encontrado progreso para el usuario en esa fecha." });
+      return res.json({
+        msg: "Hoy no registraste actividades, pero no te desanimes. La constancia es la clave del éxito, ¡sigue adelante!",
+        estado: 0,
+      });
     }
 
     const porcentaje2 = calcularProgreso(progreso);
-    const newProgreso = {actividadesTotal: progreso.actividadesTotal, actividadesCompletada: progreso.actividadesCompletadas, porcentaje: porcentaje2};
+    const incompletas =
+      progreso.actividadesTotal - progreso.actividadesCompletadas;
+    const mensaje = mensajeCompletados(
+      progreso.actividadesTotal,
+      progreso.actividadesCompletadas,
+      progreso.todasCompletadas
+    );
+    const newProgreso = [{
+      actividadesTotal: progreso.actividadesTotal,
+      actividadesCompletada: progreso.actividadesCompletadas,
+      actividadesIncompletas: incompletas,
+      porcentaje: porcentaje2,
+      mensaje: mensaje,
+    }];
+    return res.json(newProgreso);
 
-    return res.status(200).json(newProgreso);
-    if (!progreso) {
-      return res
-        .status(404)
-        .json({ msg: "No se ha encontrado progreso para el usuario en esa fecha." });
-    }
-
-    return res.status(200).json(progreso);
   } catch (error) {
     console.error("Error en ObtenerProgresoUsuario:", error);
     return res.status(500).json({ msg: "Error interno del servidor." });
   }
 };
 
-
-const calcularProgreso = (agenda) => {
-  const porcentaje = (agenda.actividadesCompletadas / agenda.actividadesTotal) * 100;
+const calcularProgreso = agenda => {
+  const porcentaje =
+    (agenda.actividadesCompletadas / agenda.actividadesTotal) * 100;
 
   return porcentaje;
-}
-
-
+};

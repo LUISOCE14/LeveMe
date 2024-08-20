@@ -19,6 +19,6 @@ router.post("/actualizarIntereses", actualizarIntereses);
 router.get("/obtenerTodosLosIntereses", obtenerTodosLosIntereses);
 router.post("/agregarIntereses", agregarIntereses);
 router.put("/eliminarIntereses", eliminarIntereses);
-router.get("/ObtenerProgresoUsuario/:idUser", ObtenerProgresoUsuario);
+router.post("/ObtenerProgresoUsuario", ObtenerProgresoUsuario);
 
 export default router;

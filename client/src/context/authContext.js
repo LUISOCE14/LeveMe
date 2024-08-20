@@ -19,7 +19,6 @@ export const AuthProvider = ({ children }) => {
     setToken(receivedToken);
     setIdUser(dataUser.id);
     setNombreUsuario(dataUser.nombre);
-    setNombreUsuario();
     setAuthOrigin("login");
   };
   const porcentajeCompletado = actividades => {

@@ -26,6 +26,7 @@ export default function Login() {
   const navigation = useNavigation();
   const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
+  console.log(API_Url)
   const handleLogin = async () => {
     // Verificar si el campo de correo electrónico está vacío
     if (!validator.isEmail(correo)) {
@@ -76,6 +77,7 @@ export default function Login() {
       });
     }
   };
+
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
