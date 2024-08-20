@@ -13,9 +13,9 @@ export default function DialogFraseCompletada({
   const getStarts = () => {
     if (porcentaje >= 0 && porcentaje <= 30) {
       return 1;
-    } else if (porcentaje > 30 && porcentaje <= 60) {
+    } else if (porcentaje > 30 && porcentaje <= 70) {
       return 2;
-    } else if (porcentaje > 60 && porcentaje <= 100) {
+    } else if (porcentaje > 70 && porcentaje <= 100) {
       return 3;
     } else {
       return 1;
