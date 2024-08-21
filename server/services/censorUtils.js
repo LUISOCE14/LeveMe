@@ -10,7 +10,6 @@ function loadCensorWords() {
         const wordsPath = resolve(__dirname, 'censorWords.json');
         const wordsJson = fs.readFileSync(wordsPath, 'utf8');
         const wordsObject = JSON.parse(wordsJson);
-        console.log("Palabras cargadas:", wordsObject.words);
         return wordsObject.words;
     } catch (error) {
         console.error(`Error loading censor words:`, error);
