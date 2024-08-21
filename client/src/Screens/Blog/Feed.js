@@ -1,21 +1,62 @@
-import React, { useEffect, useState, useLayoutEffect } from "react";
+import React, {
+  useState,
+  useCallback,
+  useContext,
+} from "react";
 import {
   FlatList,
-  Image,
-  Pressable,
   SafeAreaView,
   StyleSheet,
   View,
   Text,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import Post from "../../Components/Post";
-import { tweets } from "./tweets";
 import { Divider, FAB } from "@rneui/base";
+import axios from "axios";
+import { AuthContext } from "../../context/authContext";
+import Toast from "react-native-toast-message";
+import Esqueleto from "../../Components/SqueletonFeed";
+
+const API_Url = process.env.API_URL;
 
 export default function Feed() {
   const navigation = useNavigation();
-  const [posts, setPosts] = useState(tweets);
+  const [posts, setPosts] = useState([]);
+  const { idUser } = useContext(AuthContext);
+  const [loading, setLoading] = useState(true);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (idUser) fetchPosts();
+    },[idUser])
+  );
+
+  const fetchPosts = async () => {
+    try {
+      const response = await axios.get(
+        `${API_Url}/api/posts/MostrarTodosLosPosts`
+      );
+      const data = response.data;
+      const estatus = response.status;
+
+      if (estatus === 200 && data.length > 0) {
+        setPosts(data);
+      }
+    } catch (error) {
+      console.error(error);
+      const errorMessage = error.response.data.msg || error.message;
+      Toast.show({
+        type: "error",
+        text2: errorMessage,
+        visibilityTime: 2000, // milisegundos
+        autoHide: true,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -23,12 +64,16 @@ export default function Feed() {
         <Text className="text-center font-bold text-2xl mb-3">Feed</Text>
         <Divider />
       </View>
+      {loading ?(
+        <Esqueleto />
+      ):(
+        <>
       <FlatList
-        data={posts.slice(0, 30)}
-        keyExtractor={(item) => item.id}
+        data={posts}
+        keyExtractor={item => item.post.id}
         renderItem={({ item }) => <Post post={item} />}
         ListHeaderComponentStyle={{ backgroundColor: "#ccc" }}
-        ItemSeparatorComponent={() => <View style={styles.divider} />}
+        ItemSeparatorComponent={() => <Divider />}
       />
       <FAB
         icon={{ name: "add", color: "white" }}
@@ -37,6 +82,8 @@ export default function Feed() {
         size="large"
         style={styles.addButton}
       />
+      </>
+      )}
     </SafeAreaView>
   );
 }

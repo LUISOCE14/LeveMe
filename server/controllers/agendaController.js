@@ -28,6 +28,7 @@ export const obtenerAgendaUser = async (req, res) => {
     );
 
     if (!agendaActiva) {
+      console.log("No hay agendas activas para este usuario.");
       return res.json({ msg: "No hay agendas activas para este usuario.", agendaActiva });
     };
   

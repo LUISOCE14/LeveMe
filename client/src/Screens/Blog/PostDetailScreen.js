@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useContext } from "react";
 import { useRoute } from "@react-navigation/native";
 import {
   StatusBar,
@@ -16,30 +16,108 @@ import Feather from "@expo/vector-icons/Feather";
 import PostContent from "../../Components/PostContent";
 import { Divider } from "@rneui/base";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import Comment from "../../Components/comment";
-import { comments } from "./comments";
+import axios from "axios";
+import Toast from "react-native-toast-message";
+import Esqueleto from "../../Components/SqueletonFeed";
+import { AuthContext } from "../../context/authContext";
+
+const API_Url = process.env.API_URL;
 
 const PostDetailScreen = () => {
   const {
     params: { post },
   } = useRoute();
+
   const [newComment, setNewComment] = useState("");
+  const { idUser } = useContext(AuthContext);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
+  const [commentsData, setCommentsData] = useState([]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchComments();
+    }, [])
+  );
+
+  const fetchComments = async () => {
+    try {
+      const response = await axios.get(
+        `${API_Url}/api/posts/MostrarPost/${post.post.id}`
+      );
+
+      const data = response.data;
+      const status = response.status;
+
+      if (status === 200 && data.length >= 0) {
+        setCommentsData(data);
+      }
+    } catch (error) {
+      console.error(error);
+      const errorMessage = error.response.data.msg || error.message;
+      Toast.show({
+        type: "error",
+        text2: errorMessage,
+        visibilityTime: 2000, // milisegundos
+        autoHide: true,
+        props:{
+          numberOfLines: 0,
+        }
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAddComment = async () => {
-    if (newComment.trim().length === 0) return console.warn("Comentario vacío");
+    if (newComment.trim().length === 0) {
+      Toast.show({
+        type: "error",
+        text2: "No se puede publicar comentarios en blanco.",
+        visibilityTime: 8000, // milisegundos
+        autoHide: true,
+      });
+      return;
+    }
     setIsPublishing(true);
-
-    // Aquí iría la lógica para enviar el comentario a tu backend
-    console.log("Nuevo comentario:", newComment);
-
-    // Simular una acción asíncrona
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    setIsPublishing(false);
-    setNewComment("");
+    try {
+      const response = await axios.post(
+        `${API_Url}/api/posts/AgregarComentario`,
+        {
+          idPost: post.post.id,
+          idUser,
+          comentario: newComment,
+        }
+      );
+      const data = response.data;
+      const status = response.status;
+      if(status === 201) {
+        Toast.show({
+          type: "success",
+          text1: "Comentario publicado correctamente.",
+          visibilityTime: 2000, // milisegundos
+          autoHide: true,
+        });
+        setCommentsData([data, ...commentsData]); // Añadir el nuevo comentario al principio de la lista
+      }
+    } catch (error) {
+      const errorMessage = error.response.data.msg || error.message;
+      Toast.show({
+        type: "error",
+        text2: errorMessage,
+        visibilityTime: 2000, // milisegundos
+        autoHide: true,
+        props:{
+          numberOfLines: 0,
+        }
+      });
+    } finally {
+      setIsPublishing(false);
+      setNewComment("");
+    }
   };
 
   return (
@@ -48,59 +126,65 @@ const PostDetailScreen = () => {
       style={styles.container}
       keyboardVerticalOffset={Platform.OS === "ios" ? 50 : 0}
     >
-      <FlatList
-        data={comments}
-        renderItem={({ item }) => <Comment comment={item} />}
-        keyExtractor={(item) => item.id}
-        ListHeaderComponent={() => (
-          <>
-            <View className="flex flex-row justify-between items-center mb-4">
-              <TouchableOpacity
-                onPress={() => navigation.goBack()}
-                className="ml-1"
-              >
-                <AntDesign name="left" size={25} color="black" />
-              </TouchableOpacity>
-              <View className="flex-grow justify-center items-center pr-8">
-                <Text className="text-black text-xl font-bold">
-                  Detalles del Post
-                </Text>
-              </View>
-            </View>
-            <Divider />
-            <PostContent post={post} />
-            <Divider />
-            <View style={styles.commentsSection}>
-              <Text style={styles.commentsSectionTitle}>Comentarios</Text>
-            </View>
-          </>
-        )}
-        contentContainerStyle={styles.flatListContent}
-        ItemSeparatorComponent={() => <Divider />}
-      />
-      <View style={styles.commentInputContainer}>
-        <TextInput
-          style={styles.commentInput}
-          placeholder="Escribe un comentario..."
-          value={newComment}
-          onChangeText={setNewComment}
-          multiline
-        />
-        <TouchableOpacity
-          onPress={handleAddComment}
-          style={[
-            styles.sendButton,
-            isPublishing ? styles.sendButtonDisabled : null,
-          ]}
-          disabled={isPublishing}
-        >
-          {isPublishing ? (
-            <ActivityIndicator size="small" color="#F97316" />
-          ) : (
-            <Feather name="send" size={24} color="#F97316" />
-          )}
-        </TouchableOpacity>
-      </View>
+      {loading ? (
+        <Esqueleto />
+      ) : (
+        <>
+          <FlatList
+            data={commentsData}
+            renderItem={({ item }) => <Comment comment={item} />}
+            keyExtractor={item => item.id}
+            ListHeaderComponent={() => (
+              <>
+                <View className="flex flex-row justify-between items-center mb-4">
+                  <TouchableOpacity
+                    onPress={() => navigation.goBack()}
+                    className="ml-1"
+                  >
+                    <AntDesign name="left" size={25} color="black" />
+                  </TouchableOpacity>
+                  <View className="flex-grow justify-center items-center pr-8">
+                    <Text className="text-black text-xl font-bold">
+                      Detalles del Post
+                    </Text>
+                  </View>
+                </View>
+                <Divider />
+                <PostContent post={post} />
+                <Divider />
+                <View style={styles.commentsSection}>
+                  <Text style={styles.commentsSectionTitle}>Comentarios</Text>
+                </View>
+              </>
+            )}
+            contentContainerStyle={styles.flatListContent}
+            ItemSeparatorComponent={() => <Divider />}
+          />
+          <View style={styles.commentInputContainer}>
+            <TextInput
+              style={styles.commentInput}
+              placeholder="Escribe un comentario..."
+              value={newComment}
+              onChangeText={setNewComment}
+              multiline
+            />
+            <TouchableOpacity
+              onPress={handleAddComment}
+              style={[
+                styles.sendButton,
+                isPublishing ? styles.sendButtonDisabled : null,
+              ]}
+              disabled={isPublishing}
+            >
+              {isPublishing ? (
+                <ActivityIndicator size="small" color="#F97316" />
+              ) : (
+                <Feather name="send" size={24} color="#F97316" />
+              )}
+            </TouchableOpacity>
+          </View>
+        </>
+      )}
       {isPublishing && (
         <View style={styles.loadingOverlay}>
           <ActivityIndicator size="large" color="#1DA1F2" />

@@ -1,17 +1,17 @@
-import mongoose from "mongoose";
 import { PostModel } from "../models/post.js";
-import jwt from "jsonwebtoken";
 import validator from "validator";
-import { UserModel } from "../models/User.js";
 import { ComentarioModel } from "../models/comentario.js";
-import { loadCensorWords, containsCensoredWords } from "../services/censorUtils.js";
-
+import {
+  loadCensorWords,
+  containsCensoredWords,
+} from "../services/censorUtils.js";
+import { UserModel } from "../models/User.js";
 
 export const agregarPost = async (req, res) => {
   try {
     // Cargar palabras censurables
     const words = loadCensorWords();
-    
+
     const { idUser, descripcion } = req.body;
     if (!validator.isMongoId(idUser)) {
       return res.status(400).json({ msg: "ID de usuario inválido." });
@@ -23,12 +23,16 @@ export const agregarPost = async (req, res) => {
     }
 
     if (!descripcion.trim()) {
-      return res.status(400).json({ msg: "La descripción no puede estar vacía." });
+      return res
+        .status(400)
+        .json({ msg: "La descripción no puede estar vacía." });
     }
 
     // Verificar si la descripción contiene palabras censurables
     if (containsCensoredWords(descripcion, words)) {
-      return res.status(400).json({ msg: "La descripción contiene palabras no permitidas." });
+      return res
+        .status(400)
+        .json({ msg: "La descripción contiene palabras no permitidas." });
     }
 
     // Si llegamos aquí, la descripción es válida
@@ -49,17 +53,33 @@ export const mostrarPost = async (req, res) => {
   try {
     // Obtener el ID del post de la solicitud
     const postId = req.params.idPost;
-    // Buscar el post en la base de datos
-    const post = await PostModel.findById(postId)
-      .populate("comentarios")
-      .exec();
+
+    // Buscar el post en la base de datos, incluyendo la información del usuario y los comentarios
+    const comentarios = await ComentarioModel.find({ idPost: postId }).populate(
+      {
+        path: "idUsuario",
+        model: "User",
+        select: "nombreCompleto avatar",
+      }
+    ).sort({ createdAt: -1 });
     // Verificar si el post existe
-    if (!post) {
+    if (!comentarios) {
       return res.status(404).json({ msg: "El post no existe." });
     }
 
+    const comentariosData = comentarios.map(comentario => ({
+      id: comentario._id,
+      contenido: comentario.contenido,
+      time: formatearFecha(comentario.createdAt),
+      usuario: {
+        id: comentario.idUsuario._id,
+        nombre: comentario.idUsuario.nombreCompleto,
+        avatar: comentario.idUsuario.avatar,
+      },
+    }));
+
     // Devolver los detalles del post
-    res.status(200).json(post);
+    res.status(200).json(comentariosData);
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: "Hubo un error al procesar la solicitud." });
@@ -68,16 +88,39 @@ export const mostrarPost = async (req, res) => {
 
 export const mostrarTodosLosPosts = async (req, res) => {
   try {
-    // Buscar todos los posts en la base de datos
-    const posts = await PostModel.find().select("-comentarios");
+    // Buscar todos los posts en la base de datos, incluyendo la información del usuario y el número de comentarios
+    const posts = await PostModel.find()
+      .populate({
+        path: "idUsuario",
+        model: "User",
+        select: "nombreCompleto avatar",
+      })
+      .select("_id descripcion time megusta comentarios")
+      .exec();
 
     // Verificar si hay posts
     if (posts.length === 0) {
       return res.status(200).json({ msg: "No hay posts.", data: [] });
     }
 
-    // Devolver todos los posts
-    res.status(200).json(posts);
+    // Transformar la respuesta para incluir el número de comentarios
+    const postData = posts.map(post => ({
+      post: {
+        id: post._id,
+        descripcion: post.descripcion,
+        time: formatearFecha(post.time),
+        megusta: post.megusta,
+        numComentarios: post.comentarios.length,
+      },
+      usuario: {
+        id: post.idUsuario._id,
+        nombreCompleto: post.idUsuario.nombreCompleto,
+        avatar: post.idUsuario.avatar,
+      },
+    }));
+
+    // Devolver los posts transformados
+    res.status(200).json(postData);
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: "Hubo un error al procesar la solicitud." });
@@ -105,7 +148,9 @@ export const agregarComentario = async (req, res) => {
 
     // Verificar si el comentario contiene palabras censurables
     if (containsCensoredWords(comentario, words)) {
-      return res.status(400).json({ msg: "El comentario contiene palabras no permitidas." });
+      return res
+        .status(400)
+        .json({ msg: "El comentario contiene palabras no permitidas." });
     }
 
     // Verificar si el post y el usuario existen
@@ -125,12 +170,58 @@ export const agregarComentario = async (req, res) => {
     });
 
     const savedComentario = await newComentario.save();
-
     postExists.comentarios.push(savedComentario._id);
+
     await postExists.save();
-    res.status(201).json({ msg: "Comentario agregado correctamente." });
+    const newCommentario =  await ExtraerInfoComentario(savedComentario);
+
+    res.status(201).json(newCommentario);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ msg: "Hubo un error al agregar el comentario." });
+    return res
+      .status(500)
+      .json({ msg: "Hubo un error al agregar el comentario." });
+  }
+};
+
+const formatearFecha = time => {
+  // Convertir la cadena de fecha recibida en un objeto Date
+  const postTime = new Date(time);
+
+  // Formatear la fecha al formato yyyy-mm-dd
+  const fechaFormateada = postTime.toISOString().split("T")[0];
+
+  return fechaFormateada;
+};
+
+const ExtraerInfoComentario = async comentarioId => {
+  try {
+    // Buscar el comentario por ID y llenar la referencia al usuario
+    const comentarioResult = await ComentarioModel.findOne({ _id: comentarioId }).populate({
+      path: "idUsuario",
+      model: "User",
+      select: "nombreCompleto avatar",
+    });
+
+    // Verificar si el comentario fue encontrado
+    if (!comentarioResult) {
+      throw new Error("Comentario no encontrado");
+    }
+
+    const comentariosData = {
+      id: comentarioResult._id,
+      contenido: comentarioResult.contenido,
+      time: formatearFecha(comentarioResult.createdAt),
+      usuario: {
+        id: comentarioResult.idUsuario._id,
+        nombre: comentarioResult.idUsuario.nombreCompleto,
+        avatar: comentarioResult.idUsuario.avatar,
+      },
+    };
+
+    return comentariosData;
+  } catch (error) {
+    console.error(error);
+    throw error; // O manejar el error según sea necesario
   }
 };

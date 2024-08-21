@@ -52,7 +52,7 @@ const PostContent = ({ post, showComments = false }) => {
   return (
     <View style={styles.singleItem}>
       <View style={styles.row}>
-        {avatar(post.author.avatar)}
+        {avatar(post.usuario.avatar)}
         <View style={styles.postContentContainer}>
           <View style={styles.rowTop}>
             <Text
@@ -62,9 +62,9 @@ const PostContent = ({ post, showComments = false }) => {
                 { color: theme === "dark" ? "#FFF" : "#000" },
               ]}
             >
-              {post.author.name}
+              {post.usuario.nombreCompleto}
             </Text>
-            <GrayText>{"2024-05-16"}</GrayText>
+            <GrayText>{post.post.time}</GrayText>
           </View>
           <Text
             style={[
@@ -72,10 +72,10 @@ const PostContent = ({ post, showComments = false }) => {
               { color: theme === "dark" ? "#FFF" : "#000" },
             ]}
           >
-            {post.fullText}
+            {post.post.descripcion}
           </Text>
           <View style={styles.rowActions}>
-            {postActions(post.replyCount, post.favoriteCount)}
+            {postActions(post.post.numComentarios, post.post.megusta)}
           </View>
         </View>
       </View>
@@ -108,7 +108,6 @@ const styles = StyleSheet.create({
         borderRadius: 22,
         marginRight: 16,
         flexShrink: 0,
-        marginTop: 4,
       },
       header: {
         fontSize: 14,

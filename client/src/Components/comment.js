@@ -26,7 +26,7 @@ const Comment = ({ comment }) => {
   return (
     <View style={styles.singleItem}>
       <View style={styles.row}>
-        {avatar(comment.avatar)}
+        {avatar(comment.usuario.avatar)}
         <View style={styles.postContentContainer}>
           <View style={styles.rowTop}>
             <Text
@@ -36,9 +36,9 @@ const Comment = ({ comment }) => {
                 { color: theme === "dark" ? "#FFF" : "#000" },
               ]}
             >
-              {comment.name}
+              {comment.usuario.nombre}
             </Text>
-            <GrayText>{"2024-05-16"}</GrayText>
+            <GrayText>{comment.time}</GrayText>
           </View>
           <Text
             style={[
@@ -46,7 +46,7 @@ const Comment = ({ comment }) => {
               { color: theme === "dark" ? "#FFF" : "#000" },
             ]}
           >
-            {comment.fullText}
+            {comment.contenido}
           </Text>
         </View>
       </View>
@@ -77,8 +77,7 @@ const styles = StyleSheet.create({
     height: 44,
     width: 44,
     borderRadius: 22,
-    marginRight: 16,
-    marginTop: 1,
+    marginRight: 12,
   },
   header: {
     fontSize: 14,
@@ -92,7 +91,7 @@ const styles = StyleSheet.create({
     color: "#000",
   },
   singleItem: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 30,
     minHeight: 44,
     flex: 1,
     padding: 16,
@@ -108,32 +107,10 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
   },
-  elemAction: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    marginRight: 24, // Añadido para dar espacio entre los botones
-  },
-  actionText: {
-    fontSize: 12,
-    color: "#444",
-  },
+
   postContentContainer: {
     flexShrink: 1,
     flexGrow: 1,
-  },
-  commentsContainer: {
-    marginTop: 16,
-  },
-  commentItem: {
-    marginBottom: 8,
-  },
-  commentAuthor: {
-    fontWeight: "bold",
-    marginBottom: 2,
-  },
-  commentContent: {
-    fontSize: 14,
   },
 });
 

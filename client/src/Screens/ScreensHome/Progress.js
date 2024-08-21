@@ -26,10 +26,9 @@ export default function Progress({ route }) {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
 
-
   useEffect(() => {
-    if(idUser){
-    FetchProgreso();
+    if (idUser) {
+      FetchProgreso();
     }
   }, [currentDate]);
 
@@ -37,7 +36,7 @@ export default function Progress({ route }) {
     setMsg("");
     setDataProgress([]);
     const date = format(currentDate, "yyyy-MM-dd");
-    try {  
+    try {
       const response = await axios.post(
         `${API_Url}/api/user/ObtenerProgresoUsuario`,
         {
@@ -45,21 +44,23 @@ export default function Progress({ route }) {
           fecha: date,
         }
       );
-      
+
       const data = response.data;
-      console.log( data);
-      
-      if (data.estado == 0 ) {
+
+      if (data.estado == 0) {
         setMsg(data.msg);
         setLoading(false);
       }
 
-      if(data.length >= 0 && response.status === 200){
+      if (data.length >= 0 && response.status === 200) {
         setDataProgress(data[0]);
         setLoading(false);
       }
     } catch (error) {
-      console.error("Error al obtener datos:", error.response ? error.response.data.msg : error.message);
+      console.error(
+        "Error al obtener datos:",
+        error.response ? error.response.data.msg : error.message
+      );
       Toast.show({
         type: "error",
         text1: "Error obteniendo el progreso",
@@ -76,92 +77,107 @@ export default function Progress({ route }) {
   const goToNextDay = () => {
     setCurrentDate(prevDate => addDays(prevDate, 1));
   };
-  console.log(dataProgress);
 
   return (
     <View className=" flex-1" style={styles.color}>
-    {loading? (
-      <View className="flex-1 flex-col items-center justify-center">
-        <Spinner size="large" color="#a855f7" />
-      </View>
-    ) : (
-      <SafeAreaView>
-        <View className="flex flex-row justify-between items-center mb-5">
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            className="bg-orange-500 p-2 rounded-tr-2xl rounded-bl-2xl ml-1"
-          >
-            <ArrowLeftIcon size="20" color="black" />
-          </TouchableOpacity>
+      {loading ? (
+        <View className="flex-1 flex-col items-center justify-center">
+          <Spinner size="large" color="#a855f7" />
+        </View>
+      ) : (
+        <SafeAreaView>
+          <View className="flex flex-row justify-between items-center mb-5">
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              className="bg-orange-500 p-2 rounded-tr-2xl rounded-bl-2xl ml-1"
+            >
+              <ArrowLeftIcon size="20" color="black" />
+            </TouchableOpacity>
 
-          {/* Contenedor para el texto */}
-          <View className="flex-grow justify-center items-center">
-            <Text className="text-black text-2xl font-bold">
-              Progreso de tu dia
-            </Text>
-          </View>
-        </View>
-        <View className="flex flex-row ">
-          <View className="w-1/6  justify-center items-center">
-            <TouchableOpacity onPress={() => goToPreviusDay()}>
-              <AntDesign name="doubleleft" size={35} color="black" />
-            </TouchableOpacity>
-          </View>
-          <View className=" w-4/6 h-10">
-            <Text className=" font-bold text-center text-2xl mt-1 ">
-              {format(currentDate, "dd-MM-yy")}
-            </Text>
-          </View>
-          <View className="w-1/6 justify-center items-center">
-            <TouchableOpacity onPress={() => goToNextDay()}>
-              <AntDesign name="doubleright" size={35} color="black" />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View className="justify-center items-center mt-5">
-          <AnimatedCircularProgress
-            size={215} // Tamaño del círculo
-            width={25} // Ancho de la barra
-            fill={Object.keys(dataProgress).length > 0 ? dataProgress.porcentaje : 0} // Progreso (valor entre 0 y 100)
-            tintColor="#3498db" // Color de la barra
-            backgroundColor="#e0e0e0" // Color de fondo de la barra
-            rotation={0} // Rotación de la barra
-            lineCap="round" // Estilo de los extremos de la barra
-          >
-            {fill => (
-              <Text style={styles.progressText} className="text-center m-1">
-                Completaste el {Math.round(Object.keys(dataProgress).length > 0 ? dataProgress.porcentaje :0)}% de tus actividades ese dia.
+            {/* Contenedor para el texto */}
+            <View className="flex-grow justify-center items-center">
+              <Text className="text-black text-2xl font-bold">
+                Progreso de tu dia
               </Text>
-            )}
-          </AnimatedCircularProgress>
-        </View>
-        {typeof dataProgress === 'object' && Object.keys(dataProgress).length > 0  ? (
-        <View className="flex flex-col justify-center items-center mt-5 ">
-          <Card
-            title={"Actividades totales del dia:"}
-            value={dataProgress.actividadesTotal}
-            tipo={"totales"}
-          />
-          <View className="flex flex-row justify-around items-center ">
-            <Card title={"Completadas:"} value={dataProgress.actividadesCompletada} tipo={"completada"} />
-            <Card title={"Incompletas:"} value={dataProgress.actividadesIncompletas } tipo={"no"} />
+            </View>
           </View>
-          <View className="justify-center items-center">
-            <Text className="text-center text-xl m-3">
-              {dataProgress.mensaje}
-            </Text>
+          <View className="flex flex-row ">
+            <View className="w-1/6  justify-center items-center">
+              <TouchableOpacity onPress={() => goToPreviusDay()}>
+                <AntDesign name="doubleleft" size={35} color="black" />
+              </TouchableOpacity>
+            </View>
+            <View className=" w-4/6 h-10">
+              <Text className=" font-bold text-center text-2xl mt-1 ">
+                {format(currentDate, "dd-MM-yy")}
+              </Text>
+            </View>
+            <View className="w-1/6 justify-center items-center">
+              <TouchableOpacity onPress={() => goToNextDay()}>
+                <AntDesign name="doubleright" size={35} color="black" />
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      ):(
-        <View className="items-center justify-center mt-14 ">
-          <Text className="text-center text-xl m-3">
-            {msg}
-          </Text>
+          <View className="justify-center items-center mt-5">
+            <AnimatedCircularProgress
+              size={215} // Tamaño del círculo
+              width={25} // Ancho de la barra
+              fill={
+                Object.keys(dataProgress).length > 0
+                  ? dataProgress.porcentaje
+                  : 0
+              } // Progreso (valor entre 0 y 100)
+              tintColor="#3498db" // Color de la barra
+              backgroundColor="#e0e0e0" // Color de fondo de la barra
+              rotation={0} // Rotación de la barra
+              lineCap="round" // Estilo de los extremos de la barra
+            >
+              {fill => (
+                <Text style={styles.progressText} className="text-center m-1">
+                  Completaste el{" "}
+                  {Math.round(
+                    Object.keys(dataProgress).length > 0
+                      ? dataProgress.porcentaje
+                      : 0
+                  )}
+                  % de tus actividades ese dia.
+                </Text>
+              )}
+            </AnimatedCircularProgress>
           </View>
- 
+          {typeof dataProgress === "object" &&
+          Object.keys(dataProgress).length > 0 ? (
+            <View className="flex flex-col justify-center items-center mt-5 ">
+              <Card
+                title={"Actividades totales del dia:"}
+                value={dataProgress.actividadesTotal}
+                tipo={"totales"}
+              />
+              <View className="flex flex-row justify-around items-center ">
+                <Card
+                  title={"Completadas:"}
+                  value={dataProgress.actividadesCompletada}
+                  tipo={"completada"}
+                />
+                <Card
+                  title={"Incompletas:"}
+                  value={dataProgress.actividadesIncompletas}
+                  tipo={"no"}
+                />
+              </View>
+              <View className="justify-center items-center">
+                <Text className="text-center text-xl m-3">
+                  {dataProgress.mensaje}
+                </Text>
+              </View>
+            </View>
+          ) : (
+            <View className="items-center justify-center mt-14 ">
+              <Text className="text-center text-xl m-3">{msg}</Text>
+            </View>
+          )}
+        </SafeAreaView>
       )}
-      </SafeAreaView>
-    )}
     </View>
   );
 }

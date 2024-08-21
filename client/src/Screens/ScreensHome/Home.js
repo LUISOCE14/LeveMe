@@ -17,7 +17,6 @@ import { AuthContext } from "../../context/authContext";
 import axios from "axios";
 import Toast from "react-native-toast-message";
 import DialogFraseCompletada from "../../Components/DialogFraseCompletada";
-import DialogFraseDiaria from "../../Components/DialogFraseDiaria";
 
 const API_Url = process.env.API_URL;
 
@@ -28,7 +27,6 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [dialogCompletada, setDialogCompletada] = useState(false);
   const [dialogFraseDiaria, setDialogFraseDiaria] = useState(null);
-
 
   useFocusEffect(
     useCallback(() => {
@@ -75,8 +73,8 @@ export default function Home() {
     }
   };
 
-  const toggleTodo = async (id) => {
-    const yaMarcado = activities.find((activity) => {
+  const toggleTodo = async id => {
+    const yaMarcado = activities.find(activity => {
       if (activity._id === id) {
         if (activity.completada === true) {
           return true;
@@ -108,7 +106,7 @@ export default function Home() {
       if (estatus === 200) {
         // Actualizar la lista de actividades
         setActivities(
-          activities.map((activity) =>
+          activities.map(activity =>
             activity._id === id
               ? { ...activity, completada: !activity.completada }
               : activity
@@ -149,7 +147,7 @@ export default function Home() {
     navigation.navigate("CheckListEdit", { activities, idAgenda, idUser });
   };
 
-  const toggleDialog = (origen) => {
+  const toggleDialog = origen => {
     if (origen === "completada") {
       setDialogCompletada(!dialogCompletada);
     } else if (origen === "fraseDiaria") {
@@ -197,10 +195,7 @@ export default function Home() {
                 <View className="flex-row  justify-center">
                   <Text className="text-sm text-center">
                     Tienes{" "}
-                    {
-                      activities.filter((activity) => !activity.completed)
-                        .length
-                    }{" "}
+                    {activities.filter(activity => !activity.completed).length}{" "}
                     actividades por completar
                   </Text>
                 </View>
@@ -209,7 +204,7 @@ export default function Home() {
                   renderItem={({ item }) => (
                     <Task {...item} toggleTodo={toggleTodo} />
                   )}
-                  keyExtractor={(item) => item._id.toString()}
+                  keyExtractor={item => item._id.toString()}
                   className="p-3"
                 />
               </>
@@ -232,7 +227,7 @@ export default function Home() {
                     paddingHorizontal: 20,
                   }}
                   titleStyle={{ color: "black", fontWeight: "bold" }}
-                  onPress={() => navigation.navigate("Progress",{idUser})}
+                  onPress={() => navigation.navigate("Progress", { idUser })}
                 />
               </View>
 
@@ -268,7 +263,7 @@ export default function Home() {
                     paddingHorizontal: 20,
                   }}
                   titleStyle={{ color: "black", fontWeight: "bold" }}
-                  onPress={() => navigation.navigate("Progress",{idUser})}
+                  onPress={() => navigation.navigate("Progress", { idUser })}
                 />
               </View>
             </View>
