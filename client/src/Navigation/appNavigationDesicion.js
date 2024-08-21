@@ -4,8 +4,9 @@ import StackScreenWelcome from './StackScreenWelcome';
 import TabNavigation from './TabNavigationApp';
 import { AuthContext } from '../context/authContext'; // Asegúrate de que la ruta sea correcta
 
+
 const AppNavigationDecision = () => {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated,login } = useContext(AuthContext);
   return (
     <NavigationContainer>
       {!isAuthenticated? (

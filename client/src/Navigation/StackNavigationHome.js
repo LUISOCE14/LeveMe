@@ -4,8 +4,7 @@ import HomeScreen from '../Screens/ScreensHome/Home'
 import CheckListEdit from '../Screens/ScreensHome/CheckListEdit'
 import AddActivities from "../Screens/ScreensHome/AddActivities";
 import Progress from "../Screens/ScreensHome/Progress";
-import { Modal } from "react-native-paper";
-import SelectInterest from "../Screens/SelectInterest";
+
 const Stack = createNativeStackNavigator();
 
 
@@ -20,7 +19,6 @@ export default function StackGroupWelcome() {
         <Stack.Screen  name="CheckListEdit" component={CheckListEdit} />
         <Stack.Screen name="AddActivities"  component={AddActivities}/>
         <Stack.Screen name="Progress" component={Progress} />
-        <Stack.Screen name="SelectInterest" component={SelectInterest} />
       </Stack.Navigator>
     );
   }

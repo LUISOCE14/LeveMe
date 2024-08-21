@@ -14,7 +14,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true,
-    unique: true
+    unique: true,
   },
   avatar:{
     type: String,
@@ -22,6 +22,10 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
+  },
+  preferenciasPrecio:{
+    type:  Number,
+    required: false,
   },
   intereses:[{
     type: mongoose.Schema.Types.ObjectId,

@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-
 import React, { useState, useContext, useCallback, useEffect } from "react";
 import Task from "../../Components/Task";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";

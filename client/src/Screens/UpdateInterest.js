@@ -10,7 +10,7 @@ import { useNavigation } from "@react-navigation/native";
 
 const API_Url = process.env.API_URL;
 
-function SelectInterest() {
+function UpdateInterest() {
   const { userId, interesesUser } = useRoute().params;
   const navigation = useNavigation();
   const [selectedInterests, setSelectedInterests] = useState(interesesUser);
@@ -31,7 +31,7 @@ function SelectInterest() {
         }
       } catch (error) {
         console.error(error);
-        const errorMessage = error.response.data.message || error.message;
+        const errorMessage = error.response.data.msg || error.message;
         console.error(errorMessage);
         Toast.show({
           type: "error",
@@ -79,7 +79,7 @@ function SelectInterest() {
         }
       );
       const status = response.status;
-      const mesg = response.data.message;
+      const mesg = response.data.msg;
       if (status === 200) {
         setIsLoading(false);
         Toast.show({
@@ -90,7 +90,7 @@ function SelectInterest() {
         });
       }
     } catch (error) {
-      const errorMessage = error.response.data.message || error.message;
+      const errorMessage = error.response.data.msg || error.message;
       console.error(errorMessage);
       Toast.show({
         type: "error",
@@ -164,4 +164,4 @@ function SelectInterest() {
   );
 }
 
-export default SelectInterest;
+export default UpdateInterest;

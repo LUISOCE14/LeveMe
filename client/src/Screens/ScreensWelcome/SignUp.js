@@ -19,7 +19,6 @@ const API_Url = process.env.API_URL;
 
 //screen para hacer el registro de un nuevo cliente
 export default function SignUp() {
-  const { register } = useContext(AuthContext);
   const navigation = useNavigation();
   const [correo, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -79,31 +78,23 @@ export default function SignUp() {
   };
 
   const handleRegister = async () => { 
-    try {
-      const response = await axios.post(`${API_Url}/api/auth/register`, {
-        nombreCompleto: nombre,
-        edad: edad,
-        email: correo,
-        password: password,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = response.data;
-      const status = response.status;
-      if (data.token && status === 200) {
-        register(data.token, data.idUser, data.success);
+   try {
+      const Usuario = {
+        nombre,
+        edad,
+        correo,
+        password,
       }
-
-    } catch (error) {
-      const errorMessage = error.response.data.msg || "Ocurrió un error inesperado";
+      navigation.navigate("Questions",{Usuario});
+   } catch (error) {
+      console.log(error);
       Toast.show({
         type: "error",
-        text1: errorMessage,
+        text1: "Hubo un error al registrarte, intente nuevamente.",
         visibilityTime: 2000, // milisegundos
         autoHide: true,
       });
-    }
+   }
   };
 
   return (

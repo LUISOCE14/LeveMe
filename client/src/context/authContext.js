@@ -51,20 +51,21 @@ export const AuthProvider = ({ children }) => {
   const register = (receivedToken, receivedIdUser, success) => {
     setIsAuthenticated(success);
     setToken(receivedToken);
-    setIdUser(receivedIdUser);
-    setHasSelectedInterests(true);
-    setAuthOrigin("register");
+    setIdUser(receivedIdUser.id);
+
   };
 
-  const selectInterests = () => {
-    setHasSelectedInterests(true);
-  };
+
 
   // Función para cerrar sesión
   const logout = () => {
     setIsAuthenticated(false);
     setToken("");
     setIdUser("");
+    setAuthOrigin("");
+    setNombreUsuario("");
+    setActivities([]);
+    setHasSelectedInterests(false);
   };
   // Función para verificar la expiración del token
   const checkTokenExpiration = () => {
@@ -81,7 +82,7 @@ export const AuthProvider = ({ children }) => {
 
   // Ejecuta checkTokenExpiration cada minuto
   useEffect(() => {
-    const timer = setInterval(checkTokenExpiration, 60000); // 60000 milisegundos = 1 minuto
+    const timer = setInterval(checkTokenExpiration, 10800000); // 60000 milisegundos = 1 minuto
 
     return () => clearInterval(timer); // Limpiar el intervalo cuando el componente se desmonte
   }, [token]);
@@ -97,7 +98,6 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         logout,
-        selectInterests,
         porcentajeCompletado,
         nombreUser,
       }}

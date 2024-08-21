@@ -54,7 +54,7 @@ export default function Profile() {
             }
           }
         } catch (error) {
-          const errorMessage = error.response.data.message || error.message;
+          const errorMessage = error.response.data.msg || error.message;
           console.error(error);
           Toast.show({
             type: "error",
@@ -181,7 +181,7 @@ export default function Profile() {
                   <Text
                     className="font-semibold text-center text-black text-base "
                     onPress={() =>
-                      navigation.navigate("SelectInterest", {
+                      navigation.navigate("UpdateInterest", {
                         userId: idUser,
                         interesesUser: intereses,
                       })
@@ -208,7 +208,7 @@ export default function Profile() {
                 </View>
                 <TouchableOpacity
                   className="bg-orange-500 mx-7  p-4 rounded-xl "
-                  onPress={() => navigation.navigate("SelectInterest")}
+                  onPress={() => navigation.navigate("SelectInteres")}
                 >
                   <Text className="font-semibold text-center text-black text-lg ">
                     Agregar Intereses 😊

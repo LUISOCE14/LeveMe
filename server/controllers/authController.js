@@ -10,13 +10,13 @@ dotenv.config({
 export const iniciarSesion = async (req, res) => {
   const { email, password } = req.body;
   // Convertir el correo electrónico a minúsculas para evitar duplicados
+  const lowerCaseEmail = email.toLowerCase();
   try {
     // Verificar que el usuario exista
 
-    const user = await UserModel.findOne({ email });
+    const user = await UserModel.findOne({ email: lowerCaseEmail });
 
     if (!user) {
-      console.log("Usuario no encontrado");
       return res.status(400).json({ msg: "Usuario no encontrado" });
     }
 
@@ -64,32 +64,34 @@ export const iniciarSesion = async (req, res) => {
 
 export const registrarUsuario = async (req, res) => {
   // Obtener los datos del usuario a registrar
-  const { nombreCompleto, edad, email, password } = req.body;
-  //convertir el email a minisculas
-  email = email.toLowerCase();
+  const { Usuario } = req.body;
+   const email = Usuario.correo;
+   Usuario.correo = email.toLowerCase();
 
   try {
-    // Verificar que el usuario no exista previamente
 
-    const existingUser = await UserModel.findOne({ email });
+
+    const existingUser = await UserModel.findOne({ email: Usuario.correo });
     if (existingUser) {
       return res.status(409).json({ msg: "El correo electronico ya existe" });
     }
     //encriptando la contraseña
-    const hashedPassword = await bcrypt.hash(password, 10);
-    console.log(email);
+    const hashedPassword = await bcrypt.hash(Usuario.password, 10);
     //Insertando el usuario en la base de datos
     const newUser = await UserModel.create({
-      nombreCompleto,
-      edad,
-      email,
+      nombreCompleto: Usuario.nombre,
+      edad: Usuario.edad,
+      email: Usuario.correo,
+      avatar:
+        "https://objetivoligar.com/wp-content/uploads/2017/03/blank-profile-picture-973460_1280-768x768.jpg",
       password: hashedPassword,
+      preferenciasPrecio: Usuario.preferenciasPrecio,
+      intereses: Usuario.intereses,
     });
-    console.log("pase");
     // Crear el payload del token
     const payload = {
       user: {
-        id: newUser.id, // Solo se devuelve el ID del usuario
+        id: newUser._id, // Solo se devuelve el ID del usuario
       },
     };
 
@@ -113,7 +115,8 @@ export const registrarUsuario = async (req, res) => {
           success: true,
           token, // Este es el token JWT que el cliente debe almacenar y utilizar en futuras solicitudes
           user: {
-            id: payload.user.id, // Solo se devuelve el ID del usuario
+            id: newUser._id,
+            nombre: newUser.nombreCompleto // Solo se devuelve el ID del usuario
           },
         });
       }

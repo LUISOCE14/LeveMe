@@ -5,6 +5,8 @@ import WelcomeScreen from "../Screens/ScreensWelcome/Welcome";
 import LoginScreen from "../Screens/ScreensWelcome/Login";
 import SignupScreen from "../Screens/ScreensWelcome/SignUp"
 import { AuthContext } from "../context/authContext";
+import InterestsScreen from "../Screens/ScreensWelcome/SelectInteres";
+import Questions from './../Screens/ScreensWelcome/Questions';
 
 const Stack = createNativeStackNavigator();
 
@@ -12,19 +14,6 @@ const Stack = createNativeStackNavigator();
 //Stack que se muestra cuando un usuario no esta registrado o no ha iniciado sesion
 //Las pantallas que se veran al inicio y la forma de como se muestran
 export default function StackGroupWelcome() {
-  const navigation = useNavigation();
-  const { isAuthenticated, authOrigin, hasSelectedInterests } = useContext(AuthContext);
-
-  useEffect(() => {
-    if (isAuthenticated && authOrigin === 'login') {
-      navigation.navigate('Home');
-    } else if (isAuthenticated && authOrigin === 'register' &&!hasSelectedInterests) {
-      navigation.navigate('Interests');
-    } else if (isAuthenticated && authOrigin === 'register' && hasSelectedInterests) {
-      navigation.navigate('Home');
-    }
-  }, [isAuthenticated, authOrigin, hasSelectedInterests, navigation]);
-
 
     return (
       //Contenedor
@@ -45,6 +34,17 @@ export default function StackGroupWelcome() {
           options={{ headerShown: false }}
           component={SignupScreen}
         />
+        <Stack.Screen
+        name="Interests"
+        options={{ headerShown: false }}
+        component={InterestsScreen}
+        />
+         <Stack.Screen
+        name="Questions"
+        options={{ headerShown: false }}
+        component={Questions}
+        />
+
       </Stack.Navigator>
     );
   }
