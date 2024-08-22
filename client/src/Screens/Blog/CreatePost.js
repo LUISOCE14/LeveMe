@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useContext } from "react";
 import {
   View,
   Text,
@@ -11,26 +11,70 @@ import { useNavigation } from "@react-navigation/native";
 import { Avatar, Button, Divider, FAB } from "@rneui/base";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import Toast from "react-native-toast-message";
+import axios from "axios";
+import { AuthContext } from "../../context/authContext";
+
+const API_Url = process.env.API_URL;
 
 export default function CreatePost() {
   const navigation = useNavigation();
   const [text, setText] = useState("");
   const [isPublishing, setIsPublishing] = useState(false);
+  const { idUser } = useContext(AuthContext);
   const MAX_CHARACTERS = 280;
 
-
   const handlePostCreation = async () => {
-    if (text.trim().length === 0) return console.warn("El texto no puede estar vacío");
-    setIsPublishing(true);
+    if (text.trim().length === 0) {
+      Toast.show({
+        type: "error",
+        text2: "No se puede publicar por que esta vacio",
+        visibilityTime: 4000, // milisegundos
+        autoHide: true,
+      });
+      return;
+    }
+    try {
+      setIsPublishing(true);
+      const response = await axios.post(
+        `${API_Url}/api/posts/AgregarPost`,
+        {
+          idUser,
+          descripcion: text,
+        }
+      )
+      const data = response.data;
 
-    // Aquí puedes agregar la lógica para enviar la publicación al servidor
-    console.log('Texto de la publicación:', text);
+      if (data.estado === 1) {
+        Toast.show({
+          type: "success",
+          text2: data.msg,
+          visibilityTime: 9000, // milisegundos
+          autoHide: true,
+        });
+        navigation.goBack();
+      } 
 
-    // Simular una acción asíncrona
-    await new Promise((resolve) => setTimeout(resolve, 9000));
-
-    setIsPublishing(false);
-    navigation.goBack();
+      if(data.estado === 0){
+        Toast.show({
+          type: "error",
+          text2: data.msg,
+          visibilityTime: 2000, // milisegundos
+          autoHide: true,
+        });
+      }       
+    } catch (error) {
+      console.error(error);
+      const errorMessage = error.response.data.msg || error.message;
+      Toast.show({
+        type: "error",
+        text2: errorMessage,
+        visibilityTime: 8000, // milisegundos
+        autoHide: true,
+      });
+    } finally{
+      setIsPublishing(false);
+    }
   };
 
   return (

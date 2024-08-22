@@ -1,9 +1,11 @@
-import React from "react";
+import React,{useContext} from "react";
 import { StyleSheet, View, Image, Text, useColorScheme, TouchableOpacity } from "react-native";
 import { EvilIcons } from "@expo/vector-icons";
 
 
-const postActions = (comments, likes) => {
+const API_Url = process.env.API_URL;
+
+const postActions = (comments, likes, addLike,idPost) => {
   const theme = useColorScheme();
   return (
     <View style={[styles.rowActions, styles.actionBar]}>
@@ -19,7 +21,7 @@ const postActions = (comments, likes) => {
         <Text style={styles.actionText}>{comments}</Text>
       </View>
       <View style={styles.elemAction}>
-        <TouchableOpacity onPress={() => console.log("Like")}>
+        <TouchableOpacity onPress={() => addLike(idPost)}>
         <EvilIcons
           style={styles.actionButton}
           name="heart"
@@ -46,9 +48,8 @@ const GrayText = ({ children, numberOfLines, style }) => {
   );
 };
 
-const PostContent = ({ post, showComments = false }) => {
+const PostContent = ({ post, addLike }) => {
   const theme = useColorScheme();
-  
   return (
     <View style={styles.singleItem}>
       <View style={styles.row}>
@@ -75,7 +76,7 @@ const PostContent = ({ post, showComments = false }) => {
             {post.post.descripcion}
           </Text>
           <View style={styles.rowActions}>
-            {postActions(post.post.numComentarios, post.post.megusta)}
+            {postActions(post.post.numComentarios, post.post.megusta, addLike,post.post.id)}
           </View>
         </View>
       </View>

@@ -14,25 +14,24 @@ export const agregarPost = async (req, res) => {
 
     const { idUser, descripcion } = req.body;
     if (!validator.isMongoId(idUser)) {
-      return res.status(400).json({ msg: "ID de usuario inválido." });
+      return res.json({ msg: "ID de usuario inválido.",estado: 0 });
     }
 
     const userExists = await UserModel.findById(idUser);
     if (!userExists) {
-      return res.status(404).json({ msg: "El usuario no existe." });
+      return res.json({ msg: "El usuario no existe.",estado: 0 });
     }
 
     if (!descripcion.trim()) {
       return res
         .status(400)
-        .json({ msg: "La descripción no puede estar vacía." });
+        .json({ msg: "La descripción no puede estar vacía.",estado: 0 });
     }
 
     // Verificar si la descripción contiene palabras censurables
     if (containsCensoredWords(descripcion, words)) {
       return res
-        .status(400)
-        .json({ msg: "La descripción contiene palabras no permitidas." });
+        .json({ msg: "La descripción contiene palabras no permitidas.",estado: 0 });
     }
 
     // Si llegamos aquí, la descripción es válida
@@ -42,7 +41,7 @@ export const agregarPost = async (req, res) => {
     });
 
     await newPost.save();
-    res.status(201).json(newPost);
+    res.status(201).json({msg: "Post agregado correctamente.", estado: 1 });
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: "Error interno del servidor." });
@@ -95,7 +94,7 @@ export const mostrarTodosLosPosts = async (req, res) => {
         model: "User",
         select: "nombreCompleto avatar",
       })
-      .select("_id descripcion time megusta comentarios")
+      .select("_id descripcion time megusta comentarios likesUsuarios")
       .exec();
 
     // Verificar si hay posts
@@ -111,6 +110,7 @@ export const mostrarTodosLosPosts = async (req, res) => {
         time: formatearFecha(post.time),
         megusta: post.megusta,
         numComentarios: post.comentarios.length,
+        likes: JSON.stringify(post.likesUsuarios, null, 2),
       },
       usuario: {
         id: post.idUsuario._id,
@@ -223,5 +223,44 @@ const ExtraerInfoComentario = async comentarioId => {
   } catch (error) {
     console.error(error);
     throw error; // O manejar el error según sea necesario
+  }
+};
+
+
+export const agregarLike = async (req, res) => {
+  try {
+    const { idUser, idPost } = req.body;
+    console.log(req.body);
+
+    if (typeof idUser !== "string" || !validator.isMongoId(idUser)) {
+      return res.status(400).json({ msg: "ID de usuario inválido." });
+    }
+    if (typeof idPost!== "string" ||!validator.isMongoId(idPost)){
+      return res.status(400).json({ msg: "ID de post inválido." });
+    }
+
+    // Buscar el post en la base de datos
+    const post = await PostModel.findById(idPost);
+    if (!post) {
+      return res.status(404).json({ msg: "El post no existe" });
+    }
+
+    // Verificar si el usuario ya ha dado like al post
+    if (post.likesUsuarios.includes(idUser)) {
+      // El usuario ya ha dado like, entonces se elimina el like
+      post.megusta--;
+      post.likesUsuarios.pull(idUser);
+      await post.save();
+      return res.status(200).json({ msg: "Like eliminado correctamente" });
+    } else {
+      // El usuario no ha dado like, entonces se agrega el like
+      post.megusta++;
+      post.likesUsuarios.push(idUser);
+      await post.save();
+      return res.status(200).json({ msg: "Like agregado correctamente" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Hubo un error al procesar la solicitud" });
   }
 };

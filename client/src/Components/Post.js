@@ -3,7 +3,7 @@ import React from "react";
 import { Pressable } from "react-native";
 import PostContent from "./PostContent";
 
-const Post = ({ post }) => {
+const Post = ({ post,addLike }) => {
   const  navigation  = useNavigation();
   return (
     <Pressable
@@ -11,7 +11,7 @@ const Post = ({ post }) => {
         navigation.navigate("Details", { post });
       }}
     >
-      <PostContent post={post} />
+      <PostContent post={post} addLike={addLike} />
     </Pressable>
   );
 };

@@ -1,15 +1,5 @@
-import React, {
-  useState,
-  useCallback,
-  useContext,
-} from "react";
-import {
-  FlatList,
-  SafeAreaView,
-  StyleSheet,
-  View,
-  Text,
-} from "react-native";
+import React, { useState, useCallback, useContext } from "react";
+import { FlatList, SafeAreaView, StyleSheet, View, Text } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import Post from "../../Components/Post";
 import { Divider, FAB } from "@rneui/base";
@@ -29,7 +19,7 @@ export default function Feed() {
   useFocusEffect(
     useCallback(() => {
       if (idUser) fetchPosts();
-    },[idUser])
+    }, [idUser])
   );
 
   const fetchPosts = async () => {
@@ -56,7 +46,56 @@ export default function Feed() {
       setLoading(false);
     }
   };
+
+  const handleLikeToggle = (idPost, idUser) => {
+    const postIndex = posts.findIndex(p => p.post.id === idPost);
   
+    if (postIndex !== -1) {
+      const updatedPosts = [...posts];
+      const post = updatedPosts[postIndex];
+  
+      // Asegúrate de que likesArray es siempre un array
+      if (!Array.isArray(post.post.likes)) {
+        post.post.likes = [];  // Si no es un array, inicialízalo como uno vacío
+      }
+  
+      const likesArray = post.post.likes;
+  
+      // Verifica si el idUser ya ha dado like
+      const existe = likesArray.includes(idUser);
+  
+      if (existe) {
+        post.post.likes = likesArray.filter(id => id !== idUser);
+        post.post.megusta = post.post.megusta === 0 ? 0 : post.post.megusta - 1;
+      } else {
+        post.post.likes.push(idUser);
+        post.post.megusta += 1;
+      }
+  
+      // Actualiza el estado de 'posts'
+      setPosts(updatedPosts);
+    }
+  };
+
+  const addLike = async idPost => {
+    handleLikeToggle(idPost);
+    try {
+      const response = await axios.post(`${API_Url}/api/posts/AgregarLike`, {
+        idUser,
+        idPost: idPost,
+      });
+      const data = response.data;
+    } catch (error) {
+      console.error(error, "aqui");
+      const errorMessage = error.response.data.msg || error.message;
+      Toast.show({
+        type: "error",
+        text2: errorMessage,
+        visibilityTime: 8000, // milisegundos
+        autoHide: true,
+      });
+    }
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -64,25 +103,25 @@ export default function Feed() {
         <Text className="text-center font-bold text-2xl mb-3">Feed</Text>
         <Divider />
       </View>
-      {loading ?(
+      {loading ? (
         <Esqueleto />
-      ):(
+      ) : (
         <>
-      <FlatList
-        data={posts}
-        keyExtractor={item => item.post.id}
-        renderItem={({ item }) => <Post post={item} />}
-        ListHeaderComponentStyle={{ backgroundColor: "#ccc" }}
-        ItemSeparatorComponent={() => <Divider />}
-      />
-      <FAB
-        icon={{ name: "add", color: "white" }}
-        color="#f97316"
-        onPress={() => navigation.navigate("CreatePost")}
-        size="large"
-        style={styles.addButton}
-      />
-      </>
+          <FlatList
+            data={posts}
+            keyExtractor={item => item.post.id}
+            renderItem={({ item }) => <Post post={item} addLike={addLike} />}
+            ListHeaderComponentStyle={{ backgroundColor: "#ccc" }}
+            ItemSeparatorComponent={() => <Divider />}
+          />
+          <FAB
+            icon={{ name: "add", color: "white" }}
+            color="#f97316"
+            onPress={() => navigation.navigate("CreatePost")}
+            size="large"
+            style={styles.addButton}
+          />
+        </>
       )}
     </SafeAreaView>
   );
