@@ -120,6 +120,26 @@ const PostDetailScreen = () => {
     }
   };
 
+
+
+  const addLike = async idPost => {
+    try {
+      const response = await axios.post(`${API_Url}/api/posts/AgregarLike`, {
+        idUser,
+        idPost: idPost,
+      });
+      const data = response.data;
+    } catch (error) {
+      console.error(error, "aqui");
+      const errorMessage = error.response.data.msg || error.message;
+      Toast.show({
+        type: "error",
+        text2: errorMessage,
+        visibilityTime: 8000, // milisegundos
+        autoHide: true,
+      });
+    }
+  };
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -150,7 +170,7 @@ const PostDetailScreen = () => {
                   </View>
                 </View>
                 <Divider />
-                <PostContent post={post} />
+                <PostContent post={post} addLike={addLike} />
                 <Divider />
                 <View style={styles.commentsSection}>
                   <Text style={styles.commentsSectionTitle}>Comentarios</Text>

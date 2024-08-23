@@ -19,7 +19,7 @@ export default function Feed() {
   useFocusEffect(
     useCallback(() => {
       if (idUser) fetchPosts();
-    }, [idUser])
+    }, [])
   );
 
   const fetchPosts = async () => {
@@ -31,7 +31,15 @@ export default function Feed() {
       const estatus = response.status;
 
       if (estatus === 200 && data.length > 0) {
-        setPosts(data);
+        // Verifica que cada post tenga un array de likes adecuado
+        const postsConLikes = data.map(post => {
+          if (typeof post.post.likes === "string") {
+            post.post.likes = JSON.parse(post.post.likes);
+          }
+          return post;
+        });
+
+        setPosts(postsConLikes);
       }
     } catch (error) {
       console.error(error);
@@ -54,20 +62,20 @@ export default function Feed() {
       const updatedPosts = [...posts];
       const post = updatedPosts[postIndex];
   
-      // Asegúrate de que likesArray es siempre un array
+      // Asegúrate de que post.likes sea un array
       if (!Array.isArray(post.post.likes)) {
-        post.post.likes = [];  // Si no es un array, inicialízalo como uno vacío
+        post.post.likes = []; // Si no es un array, inicialízalo como vacío
       }
   
-      const likesArray = post.post.likes;
-  
       // Verifica si el idUser ya ha dado like
-      const existe = likesArray.includes(idUser);
+      const userHasLiked = post.post.likes.some(id => id === idUser);
   
-      if (existe) {
-        post.post.likes = likesArray.filter(id => id !== idUser);
+      if (userHasLiked) {
+        // Si ya ha dado like, removerlo
+        post.post.likes = post.post.likes.filter(id => id !== idUser);
         post.post.megusta = post.post.megusta === 0 ? 0 : post.post.megusta - 1;
       } else {
+        // Si no ha dado like, agregarlo
         post.post.likes.push(idUser);
         post.post.megusta += 1;
       }
